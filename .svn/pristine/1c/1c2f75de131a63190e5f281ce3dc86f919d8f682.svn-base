@@ -1,0 +1,10 @@
+<?php
+
+if (!function_exists('pmr_wp_offload_media_support')) {
+	function pmr_wp_offload_media_support(){
+		if ( is_plugin_active( 'amazon-s3-and-cloudfront/wordpress-s3.php' ) ) {
+			//plugin is activated
+			add_filter( 'as3cf_get_attached_file_copy_back_to_local', '__return_true' );
+		}
+	}
+}

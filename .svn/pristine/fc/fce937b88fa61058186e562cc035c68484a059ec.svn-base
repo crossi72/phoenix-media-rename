@@ -1,0 +1,18 @@
+<?php
+
+if (!function_exists('pmr_shortpixel_support')) {
+	function pmr_shortpixel_image_optimizer_support($result, $old_meta, $new_meta ){
+		if ( is_plugin_active( 'shortpixel-image-optimiser/wp-shortpixel.php' ) ) {
+			foreach ( wp_get_registered_image_subsizes( ) as $image_size_name => $image_size_value){
+				for ( $i = 0; $i < count( $result['ShortPixel']['thumbsOptList'] ); $i++){
+					if ( $result['ShortPixel']['thumbsOptList'][$i] == $old_meta['sizes'][$image_size_name]['file'] ){
+						//this is the same thumbnail: update ShortPixel file name
+						$result['ShortPixel']['thumbsOptList'][$i] = $new_meta['sizes'][$image_size_name]['file'];
+					}
+				}
+			}
+		}
+		return $result;
+	}
+
+}

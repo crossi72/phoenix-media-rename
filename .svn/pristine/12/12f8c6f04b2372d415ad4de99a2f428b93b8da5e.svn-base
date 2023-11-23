@@ -1,0 +1,66 @@
+<?php
+
+	/**
+	 * Update Smart Slider 3 custom table
+	 *
+	 * @param string $old_filename
+	 * @param string $new_filename
+	 * @param string $extension
+	 * @return void
+	 */
+	if (!function_exists('pmr_update_smartslider_support')) {
+		function pmr_update_smartslider_support($old_filename, $new_filename, $extension){
+			if ( is_plugin_active( 'smart-slider-3/smart-slider-3.php' ) ) {
+				//plugin is activated
+				//Updating SmartSlider 3 tables
+				global $wpdb;
+
+				//compose file names
+				$old_filename = $old_filename . '.' . $extension;
+				$new_filename = $new_filename . '.' . $extension;
+
+				if(empty($old_filename) || empty($new_filename))
+				{
+					return false;
+				}
+				if ($old_filename == ''){
+					return false;
+				}
+
+				//escape filename for use in LIKE statement
+				$old_filename = $wpdb->esc_like( $old_filename );
+
+				$filter = '%/'. $old_filename;
+
+				//compose Smart Slider table name
+				$tablename = $wpdb->prefix . 'nextend2_smartslider3_slides';
+
+				if ( ! pmr_table_exist( $tablename ) ){
+					//if table does not exist, exit and return false
+					return false;
+				}else{
+					//if table exist, change file name
+					$sqlQuery = "UPDATE ". $tablename ." SET thumbnail = REPLACE(thumbnail, %s, %s), params = REPLACE(params, %s, %s) WHERE thumbnail LIKE %s";
+
+					$updated = $wpdb->query(
+						$wpdb->prepare( 
+							$sqlQuery, $old_filename, $new_filename, $old_filename, $new_filename, $filter
+						));
+				}
+
+				$tablename = $wpdb->prefix . 'nextend2_image_storage';
+
+				if ( pmr_table_exist( $tablename ) ){
+					//if table exist, change file name (unnecessary table, does not exit if table is missing)
+					$sqlQuery = "UPDATE ". $tablename ." SET image = REPLACE(image, %s, %s) WHERE image LIKE %s";
+
+					$updated = $wpdb->query(
+						$wpdb->prepare( 
+							$sqlQuery, $old_filename, $new_filename, $filter
+						));
+				}
+
+				return true;
+			}
+		}
+	}
