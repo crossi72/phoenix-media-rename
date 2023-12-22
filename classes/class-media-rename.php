@@ -843,6 +843,9 @@ class Phoenix_Media_Rename {
 							if ($new_meta != $meta[0]) update_post_meta($post->ID, $key, $new_meta, $meta[0]);
 					}
 				}
+
+				//updating Beaver Builder metadata
+				pmr_plugins::update_beaver_builder_data($post->ID, $searches, $replaces);
 			}
 
 			$i++;
