@@ -17,6 +17,7 @@ define("pluginRedirection", "redirection/redirection.php");
 define("pluginRankMath", "seo-by-rank-math/rank-math.php");
 define("pluginElementor", "elementor/elementor.php");
 define("pluginAltTextAI", "alttext-ai/atai.php");
+define("pluginBeaverBuilerLite", "beaver-builder-lite-version/fl-builder.php");
 
 abstract class elementor_element
 {
@@ -488,6 +489,84 @@ class pmr_plugins{
 			}
 		}
 	}
+
+#endregion
+
+#region BeaverBuilder compatibility
+
+	/**
+	 * Updates all Beaver Builder metadata
+	 *
+	 * @param int $post_id
+	 * @param array $searches
+	 * @param array $replaces
+	 * @return void
+	 */
+	static function update_beaver_builder_data($post_id, $searches, $replaces){
+		if (pmr_plugins::is_plugin_active(constant("pluginBeaverBuilerLite"))) {
+			//updates draft and published content
+			for ($i = 0; $i < sizeof($searches); $i++){
+				self::update_beaver_builder_meta($post_id, '_fl_builder_draft', $searches[$i], $replaces[$i]);
+				self::update_beaver_builder_meta($post_id, '_fl_builder_data', $searches[$i], $replaces[$i]);
+			}
+		}
+	}
+
+	/**
+	 * Updates single Beaver Builder metadata
+	 *
+	 * @param int $post_id the ID of the post to update
+	 * @param string $meta_key the key of the meta to update
+	 * @param string $search old filename
+	 * @param string $replace new filename
+	 * @return void
+	 */
+	static private function update_beaver_builder_meta($post_id, $meta_key, $search, $replace){
+		//get old meta value
+		$meta_value = get_post_meta($post_id, $meta_key, true);
+
+		//update meta value
+		if (self::update_picture_src($meta_value, $search, $replace)){
+			update_post_meta($post_id, $meta_key, $meta_value);
+		}
+	}
+
+	/**
+	 * Updates single Beaver Builder metadata
+	 *
+	 * @param array $meta_values meta values for the post
+	 * @param string $old_value old filename
+	 * @param string $new_value new filename
+	 * @return void
+	 */
+	static private function update_picture_src($meta_values, $old_value, $new_value) {
+		$result = false;
+
+		//iterates through meta values to update images
+		foreach ($meta_values as $key => &$value) {
+			if (is_array($value)) {
+				self::update_picture_src($value, $old_value, $new_value);
+			} else {
+				if (property_exists($value, "settings")){
+					if (property_exists($value->settings, "photo_src")){
+						$value->settings->photo_src = str_replace($old_value, $new_value, $value->settings->photo_src);
+						$result = true;
+					}
+					if (property_exists($value->settings, "filename")){
+						$value->settings->filename = str_replace($old_value, $new_value, $value->settings->filename);
+						$result = true;
+					}
+					if (property_exists($value->settings, "url")){
+						$value->settings->url = str_replace($old_value, $new_value, $value->settings->url);
+						$result = true;
+					}
+				}
+			}
+		}
+
+		return $result;
+	}
+	
 
 #endregion
 
