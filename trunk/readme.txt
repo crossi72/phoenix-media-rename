@@ -2,7 +2,7 @@
 Contributors: crossi72, ShadowsDweller
 Tags: media, file, image, attachment, rename, retitle
 Requires at least: 5.0
-Tested up to: 6.4
+Tested up to: 6.5
 Stable tag: 3.11.6
 Requires PHP: 7.4
 License: GPL3
@@ -106,6 +106,9 @@ If you would like more features, such as automatic renaming, or a dashboard for 
 6. screenshot-3.jpg
 
 == Changelog ==
+
+= 3.11.6 =
+* added compatibility with Beaver Builder Lite
 
 = 3.11.5 =
 * added integration with AltText.ai
