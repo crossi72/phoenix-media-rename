@@ -1,6 +1,6 @@
 === Phoenix Media Rename ===
 Contributors: crossi72, ShadowsDweller
-Tags: media, file, image, attachment, rename, retitle
+Tags: media, file, image, rename, retitle
 Requires at least: 5.0
 Tested up to: 6.5
 Stable tag: 3.11.7
