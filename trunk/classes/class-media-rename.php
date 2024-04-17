@@ -590,7 +590,8 @@ class Phoenix_Media_Rename {
 
 			//avoid the file renaming process
 			return 1;
-			} else {
+			}
+		else {
 			//renaming is enabled
 
 			$file_info = new pmr_file_info($attachment_id, $new_filename, $options, $post_parent_category);
@@ -657,12 +658,12 @@ class Phoenix_Media_Rename {
 				unset($post_types['revision']);
 
 				//updates posts content
-				self::update_posts($post_types, $searches, $replaces);
+				self::update_posts($post_types, $searches, $replaces, $file_info->file_old_filename);
 
 				if ($options->option_update_revisions) {
 					//update revisions, if option to update revisions is active
 					$post_types['revision'] = array('post_type' => $post_types);
-					self::update_posts($post_types, $searches, $replaces);
+					self::update_posts($post_types, $searches, $replaces, $file_info->file_old_filename);
 				}
 
 				$options->update_options($searches, $replaces);
@@ -811,12 +812,13 @@ class Phoenix_Media_Rename {
 	 * @param string $post_types array of post type to process
 	 * @param array $searches strings to search for
 	 * @param array $replaces values to replace
+	 * @param array $old_filename old file name
 	 * @return void
 	 */
-	private static function update_posts($post_types, $searches, $replaces){
+	private static function update_posts($post_types, $searches, $replaces, $old_filename){
 		$i=0;
 
-		while ($posts = get_posts(array('post_type' => $post_types, 'post_status' => 'any', 'numberposts' => 100, 'offset' => $i * 100))) {
+		while ($posts = get_posts(array('post_type' => $post_types, 'post_status' => 'any', 'numberposts' => 100, 'offset' => $i * 100, 's' => $old_filename))) {
 			foreach ($posts as $post) {
 				// Updating post content if necessary
 				$new_post = array('ID' => $post->ID);
