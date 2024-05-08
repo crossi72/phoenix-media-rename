@@ -97,4 +97,29 @@
 		}
 	};
 
+	const pmr_textbox_filename = function(){
+		textbox_filename = $(this).siblings('select').length ? $(this).siblings('select').val() : 'rename';
+	}
+
 })(jQuery);
+
+document.addEventListener('DOMContentLoaded', function() {
+	// Select the textbox using its class name
+	const textboxes = document.querySelectorAll('.phoenix-media-rename-filename');
+
+	textboxes.forEach(function(textbox) {
+		// Add an event listener for the 'input' event
+		textbox.addEventListener('input', function() {
+			// Find the closest parent 'tr' element
+			var row = this.closest('tr');
+		
+			// Within that row, find the checkbox
+			var checkbox = row.querySelector('input[type="checkbox"]');
+		
+			// Check the checkbox
+			if (checkbox) {
+				checkbox.checked = true;
+			}
+		});
+	});
+});
