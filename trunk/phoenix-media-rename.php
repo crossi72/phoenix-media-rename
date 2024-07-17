@@ -13,7 +13,7 @@ Phoenix Media Rename is free software: you can redistribute it and/or modify it 
 Phoenix Media Rename is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 You should have received a copy of the GNU General Public License along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-Phoenix icon http://sid-raphael.deviantart.com/art/Fire-Phoenix-Full-Feather-192575471 by http://sid-raphael.deviantart.com/ is licenced under https://creativecommons.org/licenses/by-sa/3.0/ 
+Phoenix icon has been generated using Microsoft Designer
 */
 
 defined('ABSPATH') or die();
