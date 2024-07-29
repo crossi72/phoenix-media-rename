@@ -351,10 +351,10 @@ class pmr_plugins{
 		$full_new_filename = $path . str_replace($real_name, $new_filename, $old_filename);
 
 		//create the new file
-		if (!copy($full_old_filename, $full_new_filename)) return __('File renaming error! Tried to copy ' . $full_old_filename . ' to ' . $full_new_filename);
+		if (!copy($full_old_filename, $full_new_filename)) return printf(__('File renaming error! Tried to copy %1$s to %2$s.', constant('PHOENIX_MEDIA_RENAME_TEXT_DOMAIN')), $full_old_filename , $full_new_filename);
 
 		//delete old media file, thumbnails will be deleted later
-		if (!unlink($full_old_filename)) return __('File renaming error! Tried to delete ' . $full_old_filename);
+		if (!unlink($full_old_filename)) return printf(__('File renaming error! Tried to delete %s.', constant('PHOENIX_MEDIA_RENAME_TEXT_DOMAIN')), $full_old_filename);
 	}
 
 	/**
