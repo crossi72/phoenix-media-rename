@@ -114,13 +114,13 @@ class pmr_lib{
 	 */
 	public static function validate_filename($post, $attachment_id, $options, $file_info){
 		//check if old file still exists
-		if (! file_exists($file_info->file_abs_path)) return __('Can\'t find original file in the folder. Tried to rename ' . $file_info->file_abs_path, constant('PHOENIX_MEDIA_RENAME_TEXT_DOMAIN'));
+		if (! file_exists($file_info->file_abs_path)) return printf(__('Can\'t find original file in the folder. Tried to rename %s.', constant('PHOENIX_MEDIA_RENAME_TEXT_DOMAIN')), $file_info->file_abs_path);
 
 		//check if post containing media file exists
-		if (!$post) return __('Post with ID ' . $attachment_id . ' does not exist!');
+		if (!$post) return printf(__('Post with ID %s does not exist!', constant('PHOENIX_MEDIA_RENAME_TEXT_DOMAIN')), $attachment_id);
 
 		//check if type of post containing media file is "attachment"
-		if ($post && $post->post_type != 'attachment') return __('Post with ID ' . $attachment_id . ' is not an attachment!', constant('PHOENIX_MEDIA_RENAME_TEXT_DOMAIN'));
+		if ($post && $post->post_type != 'attachment') return printf(__('Post with ID %s is not an attachment!', constant('PHOENIX_MEDIA_RENAME_TEXT_DOMAIN')), $attachment_id);
 
 		//check if new filename has been compiled
 		if (!$file_info->new_filename) return __('The field is empty!', constant('PHOENIX_MEDIA_RENAME_TEXT_DOMAIN'));
