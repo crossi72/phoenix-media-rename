@@ -144,7 +144,7 @@ class Phoenix_Media_Rename {
 	 */
 	function print_js() {
 		if ($this->is_media_rename_page) {
-			wp_enqueue_script(constant('PHOENIX_MEDIA_RENAME_TEXT_DOMAIN'), plugins_url('js/scripts.min.js', dirname(__FILE__)), '', '4.0.0');
+			wp_enqueue_script(constant('PHOENIX_MEDIA_RENAME_TEXT_DOMAIN'), plugins_url('js/scripts.js', dirname(__FILE__)), '', '4.0.0');
 			?>
 
 			<script type="text/javascript">
@@ -164,7 +164,8 @@ class Phoenix_Media_Rename {
 		}
 
 		if(get_current_screen()->id == 'settings_page_pmr-setting-admin') {
-			wp_enqueue_script(constant('PHOENIX_MEDIA_RENAME_TEXT_DOMAIN'), plugins_url('js/options.min.js', dirname(__FILE__)), '', '4.0.0');
+			// wp_enqueue_script(constant('PHOENIX_MEDIA_RENAME_TEXT_DOMAIN'), plugins_url('js/options.min.js', dirname(__FILE__)), '', '4.0.0');
+			wp_enqueue_script(constant('PHOENIX_MEDIA_RENAME_TEXT_DOMAIN'), plugins_url('js/options.js', dirname(__FILE__)), '', '4.0.0');
 		}
 	}
 

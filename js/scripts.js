@@ -18,7 +18,8 @@ class PhoenixMediaRename {
 
 	init() {
 		this.form = document.getElementById('posts-filter');
-		this.isMediaSingle = document.querySelector('.wp_attachment_image') !== null;
+		// this.isMediaSingle = document.querySelector('.wp_attachment_image') !== null;
+		this.checkMediaPage();
 
 		// Handle media library list page
 		if (!this.isMediaSingle) {
@@ -42,6 +43,20 @@ class PhoenixMediaRename {
 
 		// Add filename textbox listeners
 		this.initTextboxListeners();
+	}
+
+	/**
+	 * checks if current page is single media edit page
+	 */
+	checkMediaPage(){
+		const url = window.location.href;
+
+		//check if page URL corresponds to media list page
+		if (url.includes('/wp-admin/upload.php')) {
+			this.isMediaSingle = false;
+		} else {
+			this.isMediaSingle = true;
+		}
 	}
 
 	initTextboxListeners() {
