@@ -11,22 +11,22 @@ document.addEventListener('DOMContentLoaded', function() {
 	function doRename(field, type, nonce) {
 		let xhr = new XMLHttpRequest();
 		let newFilename = field.value;
-		let postId = field.getAttribute('data-post-id');
+		let postId = field[currentField].getAttribute('data-post-id');
 
 		xhr.open('POST', ajaxurl, true);
 		xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
 		xhr.onreadystatechange = function() {
 			if (xhr.readyState === 4 && xhr.status === 200) {
 				let response = xhr.responseText;
-				field.querySelector('.loader').style.display = 'none';
+				field.parentElement.querySelector('.loader').style.display = 'none';
 
 				if (response != 1) {
-					field.querySelector('.error').textContent = response;
-					field.querySelector('.error').style.display = 'inline-block';
+					field.parentElement.querySelector('.error').textContent = response;
+					field.parentElement.querySelector('.error').style.display = 'inline-block';
 				} else {
-					let input = field.querySelector('input[type=text]');
+					let input = field.parentElement.querySelector('input[type=text]');
 					input.setAttribute('title', input.value);
-					field.querySelector('.success').style.display = 'inline-block';
+					field.parentElement.querySelector('.success').style.display = 'inline-block';
 				}
 
 				if (++currentField == fieldsCount) {
@@ -46,9 +46,12 @@ document.addEventListener('DOMContentLoaded', function() {
 					catch (err){
 					}
 
-					document.getElementById('doaction').disabled = false;
+					//enable alla action buttons
+					const submitButtons = document.querySelectorAll('input[type="submit"]');
+					submitButtons.forEach(button => button.disabled = false);
+					// document.getElementById('doaction').disabled = false;
 				} else {
-					doRename(fields[currentField]);
+					// doRename(fields[currentField]);
 				}
 			}
 		};
@@ -115,35 +118,38 @@ document.addEventListener('DOMContentLoaded', function() {
 		} else {
 			//list media page
 			//disable action button
-			document.getElementById('doaction').disabled = true;
+			// document.getElementById('doaction').disabled = true;
+			const submitButtons = document.querySelectorAll('input[type="submit"]');
+			submitButtons.forEach(button => button.disabled = true);
 			// form = document.getElementById('posts-filter');
 			// fields = Array.from(form.querySelectorAll('#the-list input:checked')).map(function(input) {
 			// 	return input.closest('tr').querySelector('.phoenix-media-rename');
 			// });
-			fields = document.querySelectorAll('.phoenix-media-rename-filename');
+
+			//get all table rows
+			let rows = document.querySelectorAll('#the-list tr');
+
+			// Filter rows to find those containing a checked checkbox
+			rows = Array.from(rows).filter(row =>
+				row.querySelector('input[type="checkbox"]:checked')
+			);
+
+			fields = rows.flatMap(row =>
+				Array.from(row.querySelectorAll('.phoenix-media-rename-filename'))
+			);
+
+			// fields = document.querySelectorAll('.phoenix-media-rename-filename');
 			fieldsCount = fields.length;
 
+			//show loader icon and hide success and error icons
 			for (i = 0; i < fieldsCount; i++){
-				//check if checkbox is checked
-				if (fields[i].closest('tr').querySelector('input[type="checkbox"]').checked){
-				// if (fieldsCount) {
-					// fields.forEach(function(field) {
-					// 	field.querySelector('.loader').style.display = 'inline-block';
-					// 	field.querySelector('.error').style.display = 'none';
-					// 	field.querySelector('.success').style.display = 'none';
-					// });
+				fields[i].parentElement.querySelector('.loader').style.display = 'inline-block';
+				fields[i].parentElement.querySelector('.error').style.display = 'none';
+				fields[i].parentElement.querySelector('.success').style.display = 'none';
 
-					//show loader icon and hide success and error icons
-					fields[i].parentElement.querySelector('.loader').style.display = 'inline-block';
-					fields[i].parentElement.querySelector('.error').style.display = 'none';
-					fields[i].parentElement.querySelector('.success').style.display = 'none';
-
-					doRename(fields[currentField], type, nonce);
-
-					event.preventDefault();
-				}
-				// }
+				event.preventDefault();
 			}
+			doRename(fields, type, nonce);
 		}
 	}
 
