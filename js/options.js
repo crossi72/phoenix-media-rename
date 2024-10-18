@@ -1,29 +1,31 @@
-(function($) {
-
-	//add event handler to "sanitize filenames" checkbox
-	$(document).ready(function() {
-		$('#pmr_sanitize_filenames').click(check_accents)
+// Immediately Invoked Function Expression (IIFE)
+(() => {
+	// Add event handler to "sanitize filenames" checkbox when DOM is loaded
+	document.addEventListener('DOMContentLoaded', () => {
+		document.getElementById('pmr_sanitize_filenames')
+			.addEventListener('click', checkAccents);
 	});
 
-	//add event handler to "remove accents" checkbox
-	$(document).ready(function() {
-		$('#pmr_remove_accents').click(check_sanitize)
+	// Add event handler to "remove accents" checkbox when DOM is loaded
+	document.addEventListener('DOMContentLoaded', () => {
+		document.getElementById('pmr_remove_accents')
+			.addEventListener('click', checkSanitize);
 	});
 
-	//change "remove accents" checkbox state if needed
-	var check_accents = function () {
-		if ($('#pmr_sanitize_filenames').prop('checked')){
-			//"sanitize filenames" is on: remove accents has to be on
-			$('#pmr_remove_accents').prop('checked', true);
-		};
-	}
+	// Change "remove accents" checkbox state if needed
+	const checkAccents = () => {
+		if (document.getElementById('pmr_sanitize_filenames').checked) {
+			// "sanitize filenames" is on: remove accents has to be on
+			document.getElementById('pmr_remove_accents').checked = true;
+		}
+	};
 
-	//change "remove accents" checkbox state if needed
-	var check_sanitize = function () {
-		if (!$('#pmr_remove_accents').prop('checked') && $('#pmr_sanitize_filenames').prop('checked')){
-			//"sanitize filenames" is on: remove accents has to be on
-			$('#pmr_remove_accents').prop('checked', true);
-		};
-	}
-
-})(jQuery);
+	// Change "remove accents" checkbox state if needed
+	const checkSanitize = () => {
+		if (!document.getElementById('pmr_remove_accents').checked && 
+			document.getElementById('pmr_sanitize_filenames').checked) {
+			// "sanitize filenames" is on: remove accents has to be on
+			document.getElementById('pmr_remove_accents').checked = true;
+		}
+	};
+})();

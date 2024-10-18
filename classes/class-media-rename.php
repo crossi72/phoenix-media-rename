@@ -144,7 +144,8 @@ class Phoenix_Media_Rename {
 	 */
 	function print_js() {
 		if ($this->is_media_rename_page) {
-			wp_enqueue_script(constant('PHOENIX_MEDIA_RENAME_TEXT_DOMAIN'), plugins_url('js/scripts.min.js', dirname(__FILE__)), array('jquery'), '3.1.0');
+			// wp_enqueue_script(constant('PHOENIX_MEDIA_RENAME_TEXT_DOMAIN'), plugins_url('js/scripts.min.js', dirname(__FILE__)), array('jquery'), '3.1.0');
+			wp_enqueue_script(constant('PHOENIX_MEDIA_RENAME_TEXT_DOMAIN'), plugins_url('js/scripts.js', dirname(__FILE__)), '', '4.0.0');
 			?>
 
 			<script type="text/javascript">
@@ -161,6 +162,10 @@ class Phoenix_Media_Rename {
 			</script>
 
 			<?php
+		}
+
+		if(get_current_screen()->id == 'settings_page_pmr-setting-admin') {
+			wp_enqueue_script(constant('PHOENIX_MEDIA_RENAME_TEXT_DOMAIN'), plugins_url('js/options.js', dirname(__FILE__)), '', '4.0.0');
 		}
 	}
 
@@ -1049,6 +1054,7 @@ if (!function_exists('str_contains')) {
 }
 
 #region class file_info
+
 class pmr_file_info{
 	public $base_url;
 	public $file_path;
@@ -1096,5 +1102,5 @@ class pmr_file_info{
 
 		$this->new_file_rel_path = preg_replace('~[^/]+$~', $this->new_filename . '.' . $this->file_extension, $this->file_rel_path);
 		$this->new_file_abs_path = preg_replace('~[^/]+$~', $this->new_filename . '.' . $this->file_extension, $this->file_abs_path);
-		}
+	}
 }
