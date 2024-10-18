@@ -1,199 +1,159 @@
-document.addEventListener('DOMContentLoaded', function() {
-	let form, fields, isMediaSingle, fieldsCount, currentField = 0;
-
-	/**
-	 * manage the renaming process
-	 * 
-	 * @param object field the field containing the new filename
-	 * @param string type rename operation in progress
-	 * @param string nonce WP nonce
-	 */
-	function doRename(field, type, nonce) {
-		let xhr = new XMLHttpRequest();
-		let newFilename = field.value;
-		let postId = field[currentField].getAttribute('data-post-id');
-
-		xhr.open('POST', ajaxurl, true);
-		xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
-		xhr.onreadystatechange = function() {
-			if (xhr.readyState === 4 && xhr.status === 200) {
-				let response = xhr.responseText;
-				field.parentElement.querySelector('.loader').style.display = 'none';
-
-				if (response != 1) {
-					field.parentElement.querySelector('.error').textContent = response;
-					field.parentElement.querySelector('.error').style.display = 'inline-block';
-				} else {
-					let input = field.parentElement.querySelector('input[type=text]');
-					input.setAttribute('title', input.value);
-					field.parentElement.querySelector('.success').style.display = 'inline-block';
-				}
-
-				if (++currentField == fieldsCount) {
-					currentField = 0;
-
-					try{
-						//get error notification element
-						let errorElement = document.querySelector('.error');
-
-						if (errorElement) {
-							//check if error notification element is visible (error is raised)
-							if (window.getComputedStyle(errorElement).display == 'none'){
-								form.submit();
-							};
-						}
-					}
-					catch (err){
-					}
-
-					//enable alla action buttons
-					const submitButtons = document.querySelectorAll('input[type="submit"]');
-					submitButtons.forEach(button => button.disabled = false);
-					// document.getElementById('doaction').disabled = false;
-				} else {
-					// doRename(fields[currentField]);
-				}
-			}
-		};
-
-		let params = 'action=phoenix_media_rename&type=' + type +
-			'&_wpnonce=' + nonce +
-			'&new_filename=' + newFilename +
-			'&post_id=' + postId;
-		xhr.send(params);
+// Main class to handle media rename functionality
+class PhoenixMediaRename {
+	constructor() {
+		this.form = null;
+		this.fields = null;
+		this.type = null;
+		this.isMediaSingle = false;
+		this.fieldsCount = 0;
+		this.currentField = 0;
+		
+		// Bind methods
+		this.doRename = this.doRename.bind(this);
+		this.processFormSubmit = this.processFormSubmit.bind(this);
+		
+		// Initialize when DOM is loaded
+		document.addEventListener('DOMContentLoaded', () => this.init());
 	}
 
-	function processFormSubmit(event) {
-		let type, newFilename, nonce;
+	init() {
+		this.form = document.getElementById('posts-filter');
+		this.isMediaSingle = document.querySelector('.wp_attachment_image') !== null;
 
-		//get WP nonce
-		nonce = document.getElementById('_mr_wp_nonce').value;
-
-		// const siblings = [...this.parentNode.children].filter(child => child.tagName === 'SELECT' && child !== this);
-
-		// type = siblings.length ? siblings[0].value : 'rename';
-		// type = this.nextElementSibling && this.nextElementSibling.tagName === 'SELECT' ? this.nextElementSibling.value : 'rename';
-		// get SELECT control
-		isMediaSingle = document.querySelectorAll('.wp_attachment_image').length > 0;
-
-		if (isMediaSingle){
-			//single media page: set operation to rename
-			type = 'rename';
-		} else {
-			//list media page: get selected operation
-			type = document.querySelector('#bulk-action-selector-top').value;
+		// Handle media library list page
+		if (!this.isMediaSingle) {
+			document.querySelectorAll('.tablenav select[name^=action]').forEach(select => {
+				for (let label in MRSettings.labels) {
+					const option = document.createElement('option');
+					option.value = label;
+					option.textContent = decodeURIComponent(MRSettings.labels[label].replace(/\+/g, '%20'));
+					select.insertBefore(option, select.lastElementChild);
+				}
+			});
 		}
 
-		if (!isMediaSingle &&
-			(
-				type != 'rename'
-				&& type != 'rename_retitle'
-				&& type != 'retitle'
-				&& type != 'retitle_from_post_title'
-				&& type != 'rename_from_post_title'
-				&& type != 'rename_retitle_from_post_title'
-			)
-		) {
+		// Add event listeners
+		if (document.getElementById('post')) {
+			document.getElementById('post').addEventListener('submit', this.processFormSubmit);
+		}
+		document.querySelectorAll('.tablenav .button.action').forEach(button => {
+			button.addEventListener('click', this.processFormSubmit);
+		});
+
+		// Add filename textbox listeners
+		this.initTextboxListeners();
+	}
+
+	initTextboxListeners() {
+		const textboxes = document.querySelectorAll('.phoenix-media-rename-filename');
+		textboxes.forEach(textbox => {
+			textbox.addEventListener('input', function() {
+				const row = this.closest('tr');
+				const checkbox = row.querySelector('input[type="checkbox"]');
+				if (checkbox) {
+					checkbox.checked = true;
+				}
+			});
+		});
+	}
+
+	async doRename(field) {
+		const formData = new FormData();
+		formData.append('action', 'phoenix_media_rename');
+		formData.append('type', this.type);
+		formData.append('_wpnonce', this.form.querySelector('input[name=_mr_wp_nonce]').value);
+		formData.append('new_filename', field.querySelector('input').value);
+		formData.append('post_id', field.querySelector('input').dataset.postId);
+
+		const loader = field.querySelector('.loader');
+		const error = field.querySelector('.error');
+		const success = field.querySelector('.success');
+
+		try {
+			const response = await fetch(ajaxurl, {
+				method: 'POST',
+				body: formData
+			});
+			const data = await response.text();
+
+			loader.style.display = 'none';
+
+			if (data !== '1') {
+				error.textContent = data;
+				error.style.display = 'inline-block';
+			} else {
+				const textInput = field.querySelector('input[type=text]');
+				textInput.title = textInput.value;
+				success.style.display = 'inline-block';
+			}
+
+			this.currentField++;
+			if (this.currentField === this.fieldsCount) {
+				this.currentField = 0;
+				
+				if (!this.form.querySelector('.error[style*="display: inline-block"]')) {
+					this.form.submit();
+				}
+
+				//enable action buttons
+				const submitButtons = document.querySelectorAll('input[type="submit"]');
+				submitButtons.forEach(button => button.disabled = false);
+			} else {
+				this.doRename(this.fields[this.currentField]);
+			}
+		} catch (err) {
+			console.error('Error during rename:', err);
+			error.textContent = 'An error occurred during rename';
+			error.style.display = 'inline-block';
+			loader.style.display = 'none';
+		}
+	}
+
+	processFormSubmit(event) {
+		const target = event.target;
+		this.type = target.matches('select') ? target.value : 'rename';
+
+		// Check if action is valid
+		const validActions = ['rename', 'rename_retitle', 'retitle', 'retitle_from_post_title', 
+							'rename_from_post_title', 'rename_retitle_from_post_title'];
+		
+		if (!this.isMediaSingle && !validActions.includes(this.type)) {
 			return;
 		}
 
-		if (isMediaSingle) {
-			//single media page
-			// form = document.getElementById('post');
-			field = document.querySelectorAll('.phoenix-media-rename-filename');
-		// ).filter(function(field) {
-		// 		return field.querySelector('input[type=text]').value != field.querySelector('input[type=text]').getAttribute('title');
-		// 	});
+		//enable action buttons
+		const submitButtons = document.querySelectorAll('input[type="submit"]');
+		submitButtons.forEach(button => button.disabled = true);
 
-			fieldsCount = 1;
-			//show loader icon and hide success and error icons
-			field.parentElement.querySelector('.loader').style.display = 'inline-block';
-			field.parentElement.querySelector('.error').style.display = 'none';
-			field.parentElement.querySelector('.success').style.display = 'none';
+		this.form = this.isMediaSingle ? 
+			document.getElementById('post') : 
+			document.getElementById('posts-filter');
 
-			doRename(field, type, nonce);
-
-			event.preventDefault();
-
+		if (this.isMediaSingle) {
+			this.fields = Array.from(this.form.querySelectorAll('.phoenix-media-rename'))
+				.filter(field => {
+					const input = field.querySelector('input[type=text]');
+					return input.value !== input.title;
+				});
 		} else {
-			//list media page
-			//disable action button
-			// document.getElementById('doaction').disabled = true;
-			const submitButtons = document.querySelectorAll('input[type="submit"]');
-			submitButtons.forEach(button => button.disabled = true);
-			// form = document.getElementById('posts-filter');
-			// fields = Array.from(form.querySelectorAll('#the-list input:checked')).map(function(input) {
-			// 	return input.closest('tr').querySelector('.phoenix-media-rename');
-			// });
+			const checkedRows = document.querySelectorAll('#the-list input:checked');
+			this.fields = Array.from(checkedRows).map(checkbox => 
+				checkbox.closest('tr').querySelector('.phoenix-media-rename'));
+		}
 
-			//get all table rows
-			let rows = document.querySelectorAll('#the-list tr');
+		this.fieldsCount = this.fields.length;
+		if (this.fieldsCount) {
+			this.fields.forEach(field => {
+				const elements = field.querySelectorAll('.loader, .error, .success');
+				elements.forEach(el => el.style.display = 'none');
+				field.querySelector('.loader').style.display = 'inline-block';
+			});
 
-			// Filter rows to find those containing a checked checkbox
-			rows = Array.from(rows).filter(row =>
-				row.querySelector('input[type="checkbox"]:checked')
-			);
-
-			fields = rows.flatMap(row =>
-				Array.from(row.querySelectorAll('.phoenix-media-rename-filename'))
-			);
-
-			// fields = document.querySelectorAll('.phoenix-media-rename-filename');
-			fieldsCount = fields.length;
-
-			//show loader icon and hide success and error icons
-			for (i = 0; i < fieldsCount; i++){
-				fields[i].parentElement.querySelector('.loader').style.display = 'inline-block';
-				fields[i].parentElement.querySelector('.error').style.display = 'none';
-				fields[i].parentElement.querySelector('.success').style.display = 'none';
-
-				event.preventDefault();
-			}
-			doRename(fields, type, nonce);
+			this.doRename(this.fields[0]);
+			event.preventDefault();
 		}
 	}
+}
 
-	// form = document.getElementById('post');
-
-	if (!isMediaSingle) {
-		document.querySelectorAll('.tablenav select[name^=action]').forEach(function(select) {
-			for (var label in MRSettings.labels) {
-				var option = document.createElement('option');
-				option.value = label;
-				option.textContent = decodeURIComponent(MRSettings.labels[label].replace(/\+/g, '%20'));
-				select.insertBefore(option, select.lastElementChild);
-			}
-		});
-	}
-
-	try{
-		document.getElementById('post').addEventListener('submit', processFormSubmit);
-	}
-	catch (err){
-	}
-
-	document.querySelectorAll('.tablenav .button.action').forEach(function(button) {
-		button.addEventListener('click', processFormSubmit);
-	});
-});
-
-document.addEventListener('DOMContentLoaded', function() {
-	// Select the textbox using its class name
-	const textboxes = document.querySelectorAll('.phoenix-media-rename-filename');
-
-	textboxes.forEach(function(textbox) {
-		// Add an event listener for the 'input' event
-		textbox.addEventListener('input', function() {
-			// Find the closest parent 'tr' element
-			let row = this.closest('tr');
-		
-			// Within that row, find the checkbox
-			let checkbox = row.querySelector('input[type="checkbox"]');
-		
-			// Check the checkbox
-			if (checkbox) {
-				checkbox.checked = true;
-			}
-		});
-	});
-});
+// Initialize the application
+const phoenixMediaRename = new PhoenixMediaRename();
