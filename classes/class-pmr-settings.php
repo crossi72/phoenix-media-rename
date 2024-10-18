@@ -48,7 +48,7 @@ class pmr_settings_page
 	{
 		// This page will be under "Settings"
 		add_options_page(
-			'Settings Admin', 
+			__('Settings Admin', constant('PHOENIX_MEDIA_RENAME_TEXT_DOMAIN')),  
 			'Phoenix Media Rename', 
 			'manage_options', 
 			'pmr-setting-admin', 
@@ -65,7 +65,7 @@ class pmr_settings_page
 		$this->options = get_option('pmr_options');
 		?>
 		<div class="wrap">
-			<h1><?php echo __('Phoenix Media Rename Settings'); ?></h1>
+			<h1><?php esc_html_e('Phoenix Media Rename Settings', constant('PHOENIX_MEDIA_RENAME_TEXT_DOMAIN')); ?></h1>
 			<form method="post" action="options.php">
 			<?php
 				// This prints out all hidden setting fields
@@ -341,9 +341,7 @@ class pmr_settings_page
 	 */
 	public function print_sanitize_filename_section_info()
 	{
-		print __('Check to sanitize file name, uncheck to leave filename as entered by user:<br>
-		<strong>Please Note</strong>: disabling this option can generate filenames that are incompatible with the server, disable at your own risk!<br>
-		<strong>Please Note</strong>: if "Sanitize filenames" is active, "Remove accents" cannot be disabled!', constant('PHOENIX_MEDIA_RENAME_TEXT_DOMAIN'));
+		print __('Check to sanitize file name, uncheck to leave filename as entered by user:<br><strong>Please Note</strong>: disabling this option can generate filenames that are incompatible with the server, disable at your own risk!<br><strong>Please Note</strong>: if "Sanitize filenames" is active, "Remove accents" cannot be disabled!', constant('PHOENIX_MEDIA_RENAME_TEXT_DOMAIN'));
 	}
 
 	/** 
