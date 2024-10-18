@@ -110,8 +110,14 @@ class PhoenixMediaRename {
 	}
 
 	processFormSubmit(event) {
-		const target = event.target;
-		this.type = target.matches('select') ? target.value : 'rename';
+		if (this.isMediaSingle){
+			//single media page: set operation to rename
+			this.type = 'rename';
+		} else {
+			//list media page: get selected operation
+			this.type = document.querySelector('#bulk-action-selector-top').value;
+		}
+
 
 		// Check if action is valid
 		const validActions = ['rename', 'rename_retitle', 'retitle', 'retitle_from_post_title', 
