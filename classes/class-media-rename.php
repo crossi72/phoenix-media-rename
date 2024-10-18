@@ -150,12 +150,12 @@ class Phoenix_Media_Rename {
 			<script type="text/javascript">
 				MRSettings = {
 					'labels': {
-						'<?php echo constant("actionRename") ?>': '<?php esc_html_e('Rename', constant('PHOENIX_MEDIA_RENAME_TEXT_DOMAIN')) ?>',
-						'<?php echo constant("actionRenameRetitle") ?>': '<?php esc_html_e('Rename & Retitle', constant('PHOENIX_MEDIA_RENAME_TEXT_DOMAIN')) ?>',
-						'<?php echo constant("actionRetitle") ?>': '<?php esc_html_e('Retitle', constant('PHOENIX_MEDIA_RENAME_TEXT_DOMAIN')) ?>',
-						'<?php echo constant("actionRetitleFromPostTitle") ?>': '<?php esc_html_e('Retitle from Post', constant('PHOENIX_MEDIA_RENAME_TEXT_DOMAIN')) ?>',
-						'<?php echo constant("actionRenameFromPostTitle") ?>': '<?php esc_html_e('Rename from Post', constant('PHOENIX_MEDIA_RENAME_TEXT_DOMAIN')) ?>',
-						'<?php echo constant("actionRenameRetitleFromPostTitle") ?>': '<?php esc_html_e('Rename & Retitle from Post', constant('PHOENIX_MEDIA_RENAME_TEXT_DOMAIN')) ?>'
+						'<?php echo constant("actionRename") ?>': '<?php _e('Rename', constant('PHOENIX_MEDIA_RENAME_TEXT_DOMAIN')) ?>',
+						'<?php echo constant("actionRenameRetitle") ?>': '<?php _e('Rename & Retitle', constant('PHOENIX_MEDIA_RENAME_TEXT_DOMAIN')) ?>',
+						'<?php echo constant("actionRetitle") ?>': '<?php _e('Retitle', constant('PHOENIX_MEDIA_RENAME_TEXT_DOMAIN')) ?>',
+						'<?php echo constant("actionRetitleFromPostTitle") ?>': '<?php _e('Retitle from Post', constant('PHOENIX_MEDIA_RENAME_TEXT_DOMAIN')) ?>',
+						'<?php echo constant("actionRenameFromPostTitle") ?>': '<?php _e('Rename from Post', constant('PHOENIX_MEDIA_RENAME_TEXT_DOMAIN')) ?>',
+						'<?php echo constant("actionRenameRetitleFromPostTitle") ?>': '<?php _e('Rename & Retitle from Post', constant('PHOENIX_MEDIA_RENAME_TEXT_DOMAIN')) ?>'
 					}
 				};
 			</script>

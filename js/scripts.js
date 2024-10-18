@@ -18,7 +18,8 @@ class PhoenixMediaRename {
 
 	init() {
 		this.form = document.getElementById('posts-filter');
-		// this.isMediaSingle = document.querySelector('.wp_attachment_image') !== null;
+
+		//init isMediaSingle
 		this.checkMediaPage();
 
 		// Handle media library list page
@@ -37,6 +38,7 @@ class PhoenixMediaRename {
 		if (document.getElementById('post')) {
 			document.getElementById('post').addEventListener('submit', this.processFormSubmit);
 		}
+
 		document.querySelectorAll('.tablenav .button.action').forEach(button => {
 			button.addEventListener('click', this.processFormSubmit);
 		});
