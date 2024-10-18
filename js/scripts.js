@@ -57,6 +57,11 @@ class PhoenixMediaRename {
 		});
 	}
 
+	/**
+	 * manage the rename (or other supported operations) process
+	 * 
+	 * @param {object} field field that contains the filename
+	 */
 	async doRename(field) {
 		const formData = new FormData();
 		formData.append('action', 'phoenix_media_rename');
@@ -109,6 +114,12 @@ class PhoenixMediaRename {
 		}
 	}
 
+	/**
+	 * manage the Submit action of the media form
+	 * 
+	 * @param {object} event
+	 * @returns 
+	 */
 	processFormSubmit(event) {
 		if (this.isMediaSingle){
 			//single media page: set operation to rename
@@ -117,7 +128,6 @@ class PhoenixMediaRename {
 			//list media page: get selected operation
 			this.type = document.querySelector('#bulk-action-selector-top').value;
 		}
-
 
 		// Check if action is valid
 		const validActions = ['rename', 'rename_retitle', 'retitle', 'retitle_from_post_title', 
