@@ -4,14 +4,14 @@
 *
 */
 
-class pmr_db{
+class phoenix_media_rename_db{
 
 	/**
 	 * Check if WordPress is installed as single or multiside and delete Phoenix Media Rename table
 	 *
 	 * @return void
 	 */
-	static function pmr_drop_tables(){
+	static function drop_tables(){
 		// is_multisite() check is important here because get_sites() is not available on single site installs.
 		if (is_multisite()) {
 			//multisite
@@ -19,15 +19,31 @@ class pmr_db{
 				//change active site
 				switch_to_blog($subsite->blog_id);
 				//create table in site database
-				self::pmr_drop_table();
+				self::drop_table();
 
 				restore_current_blog();
 			}
 		} else {
 		//single site
 			//create table
-			self::pmr_drop_table();
+			self::drop_table();
 		}
+	}
+
+	/**
+	 * Delete Phoenix Media Rename options from database
+	 *
+	 * @return void
+	 */
+	static function delete_options(){
+		global $wpdb;
+
+		//create sql query
+		$sql = 'DROP TABLE IF EXISTS ' . $wpdb->prefix . constant('pmrTableName');
+
+		$wpdb->query(
+				$sql
+			);
 	}
 
 	/**
@@ -35,7 +51,7 @@ class pmr_db{
 	 *
 	 * @return void
 	 */
-	static function pmr_drop_table(){
+	static function drop_table(){
 		global $wpdb;
 
 		//create sql query
@@ -51,7 +67,7 @@ class pmr_db{
 	 *
 	 * @return void
 	 */
-	static function pmr_update_db_table(){
+	static function update_db_table(){
 		global $wpdb;
 
 		$table_name = $wpdb->prefix . constant('pmrTableName');

@@ -27,8 +27,8 @@ abstract class elementor_element
 
 #endregion
 
-if (pmr_plugins::is_plugin_active(constant("pluginAltTextAI"))){
-	$options = new pmr_options();
+if (phoenix_media_rename_plugins::is_plugin_active(constant("pluginAltTextAI"))){
+	$options = new phoenix_media_rename_options();
 
 	if ($options->option_enable_alttext_integration){
 		add_action('atai_alttext_generated', 'pmr_on_alttext_generated', 10, 2);
@@ -39,7 +39,7 @@ if (pmr_plugins::is_plugin_active(constant("pluginAltTextAI"))){
 	}
 }
 
-class pmr_plugins{
+class phoenix_media_rename_plugins{
 
 	/**
 	 * check if plugin is active
@@ -254,7 +254,7 @@ class pmr_plugins{
 	 * @return array
 	 */
 	static function update_shortpixel_metadata($result, $old_filename, $new_filename, $attachment_id, $file_path){
-		if (pmr_plugins::is_plugin_active(constant("pluginShortpixelImageOptimiser"))) {
+		if (phoenix_media_rename_plugins::is_plugin_active(constant("pluginShortpixelImageOptimiser"))) {
 			//change filename in thumnail list
 			$shortpixelKey = 'thumbsOptList';
 			$result = self::update_single_shortpixel_metadata($result, $shortpixelKey, $old_filename, $new_filename);
@@ -439,7 +439,7 @@ class pmr_plugins{
 	static function update_elementor_data($post_id, $key = '', $searches = '', $replaces = ''){
 		global $wpdb;
 
-		if (pmr_plugins::is_plugin_active(constant("pluginElementor"))) {
+		if (phoenix_media_rename_plugins::is_plugin_active(constant("pluginElementor"))) {
 			$table_name = $wpdb->prefix . 'postmeta';
 
 			switch ($key){
@@ -503,7 +503,7 @@ class pmr_plugins{
 	 * @return void
 	 */
 	static function update_beaver_builder_data($post_id, $searches, $replaces){
-		if (pmr_plugins::is_plugin_active(constant("pluginBeaverBuilerLite"))) {
+		if (phoenix_media_rename_plugins::is_plugin_active(constant("pluginBeaverBuilerLite"))) {
 			//updates draft and published content
 			for ($i = 0; $i < sizeof($searches); $i++){
 				self::update_beaver_builder_meta($post_id, '_fl_builder_draft', $searches[$i], $replaces[$i]);

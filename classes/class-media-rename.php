@@ -600,7 +600,7 @@ class Phoenix_Media_Rename {
 
 			$file_info = new pmr_file_info($attachment_id, $new_filename, $options, $post_parent_category);
 
-			if (pmr_plugins::is_plugin_active(constant("pluginAmazonS3AndCloudfront"))) {
+			if (phoenix_media_rename_plugins::is_plugin_active(constant("pluginAmazonS3AndCloudfront"))) {
 				//plugin is active
 				add_filter('as3cf_get_attached_file_copy_back_to_local', '__return_true');
 			}
@@ -674,28 +674,28 @@ class Phoenix_Media_Rename {
 
 				do_action('pmr_renaming_successful', $file_info->file_old_filename, $file_info->new_filename);
 
-				if (pmr_plugins::is_plugin_active(constant("pluginWPML"))) {
+				if (phoenix_media_rename_plugins::is_plugin_active(constant("pluginWPML"))) {
 					//plugin is active
 					//Updating WPML tables
-					pmr_plugins::update_wpml($attachment_id);
+					phoenix_media_rename_plugins::update_wpml($attachment_id);
 				}
 
-				if (pmr_plugins::is_plugin_active(constant("pluginSmartSlider3"))) {
+				if (phoenix_media_rename_plugins::is_plugin_active(constant("pluginSmartSlider3"))) {
 					//plugin is active
 					//Updating SmartSlider 3 tables
-					pmr_plugins::update_smartslider($file_info->file_old_filename, $file_info->new_filename, $file_info->file_extension);
+					phoenix_media_rename_plugins::update_smartslider($file_info->file_old_filename, $file_info->new_filename, $file_info->file_extension);
 				}
 
-				if (pmr_plugins::is_plugin_active(constant("pluginRedirection"))) {
+				if (phoenix_media_rename_plugins::is_plugin_active(constant("pluginRedirection"))) {
 					//plugin is active
 					//Adding Redirection from old ORL to the new one
-					pmr_plugins::add_redirection($file_info->file_old_filename, $file_info->new_filename, $file_info->file_extension, $file_info->file_subfolder, $options->option_create_redirection, constant("pluginRedirection"));
+					phoenix_media_rename_plugins::add_redirection($file_info->file_old_filename, $file_info->new_filename, $file_info->file_extension, $file_info->file_subfolder, $options->option_create_redirection, constant("pluginRedirection"));
 				}
 
-				if (pmr_plugins::is_plugin_active(constant("pluginRankMath"))) {
+				if (phoenix_media_rename_plugins::is_plugin_active(constant("pluginRankMath"))) {
 					//plugin is active
 					//Adding Redirection from old ORL to the new one
-					pmr_plugins::add_redirection($file_info->file_old_filename, $file_info->new_filename, $file_info->file_extension, $file_info->file_subfolder, $options->option_create_redirection, constant("pluginRankMath"));
+					phoenix_media_rename_plugins::add_redirection($file_info->file_old_filename, $file_info->new_filename, $file_info->file_extension, $file_info->file_subfolder, $options->option_create_redirection, constant("pluginRankMath"));
 				}
 
 				return 1;
@@ -841,7 +841,7 @@ class Phoenix_Media_Rename {
 				$metas = get_post_meta($post->ID);
 				foreach ($metas as $key => $meta) {
 					if (str_contains($key, '_elementor_')){
-						pmr_plugins::update_elementor_data($post->ID, $key, $searches, $replaces);
+						phoenix_media_rename_plugins::update_elementor_data($post->ID, $key, $searches, $replaces);
 					} else {
 							//update wp_postmeta
 							$meta[0] = pmr_lib::unserialize_deep($meta[0]);
@@ -851,7 +851,7 @@ class Phoenix_Media_Rename {
 				}
 
 				//updating Beaver Builder metadata
-				pmr_plugins::update_beaver_builder_data($post->ID, $searches, $replaces);
+				phoenix_media_rename_plugins::update_beaver_builder_data($post->ID, $searches, $replaces);
 			}
 
 			$i++;
@@ -875,7 +875,7 @@ class Phoenix_Media_Rename {
 		$result = $old_meta;
 
 		//update ShortPixel thumbnails data
-		$result = pmr_plugins::update_shortpixel_metadata($result, $file_info->file_old_filename, $file_info->new_filename, $attachment_id, $file_info->file_path);
+		$result = phoenix_media_rename_plugins::update_shortpixel_metadata($result, $file_info->file_old_filename, $file_info->new_filename, $attachment_id, $file_info->file_path);
 
 		//replace original filename (needed to ensure correct wp-cli management of thumbnails renegeration)
 		if (array_key_exists('original_image', $result)){

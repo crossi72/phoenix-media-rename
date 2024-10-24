@@ -4,12 +4,12 @@
 *
 */
 
-class pmr_lib{
+class phoenix_media_rename_lib{
 
 	/**
 	 * Generate the complete filename and sanitize it (if required)
 	 *
-	 * @param pmr_options $options Phoenix Media Rename options
+	 * @param phoenix_media_rename_options $options Phoenix Media Rename options
 	 * @param string $new_filename new name for the media file
 	 * @param bool $file_edited true: file has been edited
 	 * @param string $file_filename_ends_with file suffix added by WordPress (-scaled)
@@ -67,8 +67,8 @@ class pmr_lib{
 
 		//add trailer to filename only if it is not already present
 		if (($options->option_category_filename_trailer || $options->option_filename_trailer != "")
-		&& ! (pmr_lib::ends_with($result, $filename_trailer))
-		&& ! (pmr_lib::ends_with($result, sanitize_file_name($filename_trailer)))){
+		&& ! (phoenix_media_rename_lib::ends_with($result, $filename_trailer))
+		&& ! (phoenix_media_rename_lib::ends_with($result, sanitize_file_name($filename_trailer)))){
 			$result = $result . ' ' . $filename_trailer;
 		} else{
 			//no trailer entered by user
@@ -93,7 +93,7 @@ class pmr_lib{
 		}
 
 		try{
-			if (pmr_plugins::is_plugin_active(constant("pluginArchivarixExternalImagesImporter"))) {
+			if (phoenix_media_rename_plugins::is_plugin_active(constant("pluginArchivarixExternalImagesImporter"))) {
 				//plugin is active, remove last . added by archivarix
 				$result = rtrim($result, '.');
 			}

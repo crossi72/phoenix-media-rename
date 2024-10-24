@@ -4,7 +4,7 @@
 *
 */
 
-class pmr_options {
+class phoenix_media_rename_options {
 
 	private $options;
 	public $option_update_revisions;
