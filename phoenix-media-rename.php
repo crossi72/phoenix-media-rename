@@ -66,16 +66,11 @@ register_uninstall_hook(__FILE__, 'phoenix_media_rename_uninstall');
  * Uninstallation hook: it will delete Phoenix Media Rename table from db
  */
 function phoenix_media_rename_uninstall() {
-	// if uninstall.php is not called by WordPress, die
-	if ( ! defined( 'WP_UNINSTALL_PLUGIN' ) ) {
-		die;
-	}
-
 	//delete custom Phoenix Media Rename's table
 	phoenix_media_rename_db::drop_tables();
 
 	//delete Phoenix Media Rename's options
-	phoenix_media_rename_db::drop_tables();
+	phoenix_media_rename_db::delete_options();
 }
 
 register_activation_hook(__FILE__, 'phoenix_media_rename_activate');

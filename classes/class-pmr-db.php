@@ -36,14 +36,29 @@ class phoenix_media_rename_db{
 	 * @return void
 	 */
 	static function delete_options(){
-		global $wpdb;
+		self::delete_option('pmr_db_version');
+		self::delete_option('pmr_options');
+		self::delete_option('pmr_table_installed');
+		self::delete_option('pmr_update_db_table');
+		self::delete_option('pmr_update_revisions');
+		self::delete_option('pmr_sanitize_filenames');
+		self::delete_option('pmr_remove_accents');
+		self::delete_option('pmr_debug_mode');
+		self::delete_option('pmr_create_redirection');
+		self::delete_option('pmr_serialize_if_filename_present');
+		self::delete_option('pmr_filename_lowercase');
+		self::delete_option('pmr_filename_header');
+		self::delete_option('pmr_filename_trailer');
+		self::delete_option('pmr_category_filename_header');
+		self::delete_option('pmr_category_filename_trailer');
+		self::delete_option('pmr_enable_alttext_integration');
+	}
 
-		//create sql query
-		$sql = 'DROP TABLE IF EXISTS ' . $wpdb->prefix . constant('pmrTableName');
+	static private function delete_option($option_name){
+		delete_option( $option_name );
 
-		$wpdb->query(
-				$sql
-			);
+		// for site options in Multisite
+		delete_site_option( $option_name );
 	}
 
 	/**
