@@ -19,11 +19,11 @@ define("pluginElementor", "elementor/elementor.php");
 define("pluginAltTextAI", "alttext-ai/atai.php");
 define("pluginBeaverBuilerLite", "beaver-builder-lite-version/fl-builder.php");
 
-abstract class elementor_element
-{
-	const css = 0;
-	const data = 1;
-}
+// abstract class phoenix_media_rename_elementor_element
+// {
+// 	const css = 0;
+// 	const data = 1;
+// }
 
 #endregion
 

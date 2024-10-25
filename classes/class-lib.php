@@ -108,8 +108,8 @@ class phoenix_media_rename_lib{
 	 *
 	 * @param WP_Post $post WordPress post object
 	 * @param integer $attachment_id ID of the post to update
-	 * @param pmr_options $options Phoenix Media Rename options
-	 * @param pmr_file_info $file_info filename elements
+	 * @param phoenix_media_rename_options $options Phoenix Media Rename options
+	 * @param phoenix_media_rename_file_info $file_info filename elements
 	 * @return string error message
 	 */
 	public static function validate_filename($post, $attachment_id, $options, $file_info){

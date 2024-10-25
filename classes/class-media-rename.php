@@ -17,7 +17,7 @@ define("actionRenameRetitleFromPostTitle", "rename_retitle_from_post_title");
 define("success", "pmr_renamed");
 define("pmrTableName", "pmr_status");
 
-abstract class Operation
+abstract class phoenix_media_rename_operation
 {
 	const search = 0;
 	const replace = 1;
@@ -598,7 +598,7 @@ class Phoenix_Media_Rename {
 		else {
 			//renaming is enabled
 
-			$file_info = new pmr_file_info($attachment_id, $new_filename, $options, $post_parent_category);
+			$file_info = new phoenix_media_rename_file_info($attachment_id, $new_filename, $options, $post_parent_category);
 
 			if (phoenix_media_rename_plugins::is_plugin_active(constant("pluginAmazonS3AndCloudfront"))) {
 				//plugin is active
@@ -606,7 +606,7 @@ class Phoenix_Media_Rename {
 			}
 
 			//attachment miniatures
-			$searches = self::get_attachment_urls($attachment_id, Operation::search, $file_info, $file_info->new_filename);
+			$searches = self::get_attachment_urls($attachment_id, phoenix_media_rename_operation::search, $file_info, $file_info->new_filename);
 
 			//Validations
 			$validation_message = pmr_lib::validate_filename($post, $attachment_id, $options, $file_info);
@@ -652,7 +652,7 @@ class Phoenix_Media_Rename {
 				wp_update_attachment_metadata($attachment_id, $metas);
 
 				// Replace the old with the new media link in the content of all posts and metas
-				$replaces = self::get_attachment_urls($attachment_id, Operation::replace, $file_info, $file_info->new_filename);
+				$replaces = self::get_attachment_urls($attachment_id, phoenix_media_rename_operation::replace, $file_info, $file_info->new_filename);
 
 				$post_types = get_post_types();
 
@@ -708,7 +708,7 @@ class Phoenix_Media_Rename {
 	 *
 	 * @param object $options Phoenix Media Rename options
 	 * @param integer $post_id id of the post to update (post_type attachment)
-	 * @param pmr_file_info $file_parts filename elements
+	 * @param phoenix_media_rename_file_info $file_parts filename elements
 	 * @return string error message
 	 */
 	private static function rename_files($options, $post_id, $file_info){
@@ -979,8 +979,8 @@ class Phoenix_Media_Rename {
 	 *
 	 * @param integer $attachment_id id of the attachement to change
 	 * @param boolean $remove_suffix true: remove the -scaled suffix
-	 * @param Operation $operation kind of operation (Search/Replace)
-	 * @param pmr_file_info $file_parts filename elements
+	 * @param phoenix_media_rename_operation $operation kind of operation (Search/Replace)
+	 * @param phoenix_media_rename_file_info $file_parts filename elements
 	 * @param string $new_filename the new filename
 	 * @return array
 	 */
@@ -991,7 +991,7 @@ class Phoenix_Media_Rename {
 
 			if ($file_parts->original_filename){
 				//if original_image exists, rename also the original file
-				if (($operation == Operation::search)) {
+				if (($operation == phoenix_media_rename_operation::search)) {
 					//if operation is replace, replace original filename with the new one
 					$urls[] = $file_parts->base_url . '/' . $file_parts->original_filename . '.' . $file_parts->file_extension;
 				} else {
@@ -1011,7 +1011,7 @@ class Phoenix_Media_Rename {
 	/**
 	 * Generate full filename (path + filename) for a file
 	 *
-	 * @param pmr_file_info $file_parts filename elements
+	 * @param phoenix_media_rename_file_info $file_parts filename elements
 	 * @param string $new_filename the new filename (without extension)
 	 * @return string the new full filename
 	 */
@@ -1052,9 +1052,9 @@ if (!function_exists('str_contains')) {
 	}
 }
 
-#region class file_info
+#region class phoenix_media_rename_file_info
 
-class pmr_file_info{
+class phoenix_media_rename_file_info{
 	public $base_url;
 	public $file_path;
 	public $file_subfolder;
