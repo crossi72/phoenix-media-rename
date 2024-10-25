@@ -4,7 +4,7 @@
 *
 */
 
-class pmr_settings_page
+class phoenix_media_rename_settings_page
 {
 	/**
 	 * Holds the values to be used in the fields callbacks
@@ -525,4 +525,4 @@ class pmr_settings_page
 }
 
 if(is_admin())
-	$pmr_settings_page = new pmr_settings_page();
+	$pmr_settings_page = new phoenix_media_rename_settings_page();
