@@ -3,7 +3,7 @@ Contributors: crossi72, ShadowsDweller
 Tags: media, file, image, rename, retitle
 Requires at least: 5.0
 Tested up to: 6.6
-Stable tag: 3.11.9
+Stable tag: 3.12.0
 Requires PHP: 7.4
 License: GPL3
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
@@ -106,6 +106,9 @@ If you would like more features, such as automatic renaming, or a dashboard for 
 6. screenshot-3.jpg
 
 == Changelog ==
+
+= 3.12.0 =
+* changed uninstall procedure
 
 = 3.11.9 =
 * fixed single media rename for non-image files

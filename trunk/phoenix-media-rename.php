@@ -4,7 +4,7 @@
 Plugin Name: Phoenix Media Rename
 Plugin URI: https://www.eurosoftlab.com/en/phoenix-media-rename/
 Description: The Phoenix Media Rename plugin allows you to simply rename your media files, once uploaded.
-Version: 3.11.9
+Version: 3.12.0
 Author: crossi72
 Author URI: https://eurosoftlab.com
 Text Domain: phoenix-media-rename
@@ -48,7 +48,7 @@ function phoenix_media_rename_init() {
 			add_action('manage_media_custom_column', array($mr, 'add_filename_column_content'), 10, 2);
 			add_action('wp_ajax_phoenix_media_rename', array($mr, 'ajax_pnx_rename'));
 			add_action('admin_enqueue_scripts', array($mr, 'print_js'));
-			add_action('admin_enqueue_scripts', 'pmr_lib::print_options_js');
+			add_action('admin_enqueue_scripts', 'phoenix_media_rename_lib::print_options_js');
 			add_action('admin_enqueue_scripts', array($mr, 'print_css'));
 		}
 	}
@@ -60,18 +60,22 @@ function phoenix_media_rename_load_plugin_textdomain() {
 	load_plugin_textdomain(constant('PHOENIX_MEDIA_RENAME_TEXT_DOMAIN'), FALSE, basename(dirname(__FILE__)) . '/languages/');
 }
 
-register_deactivation_hook(__FILE__, 'pmr_deactivate');
+register_uninstall_hook(__FILE__, 'phoenix_media_rename_uninstall');
 
 /**
- * Deactivation hook: it will delete Phoenix Media Rename table from db
+ * Uninstallation hook: it will delete Phoenix Media Rename table from db
  */
-function pmr_deactivate() {
-	pmr_db::pmr_drop_tables();
+function phoenix_media_rename_uninstall() {
+	//delete Phoenix Media Rename's options
+	phoenix_media_rename_db::delete_options();
+
+	//delete custom Phoenix Media Rename's table
+	phoenix_media_rename_db::drop_tables();
 }
 
-register_activation_hook(__FILE__, 'pmr_activate');
+register_activation_hook(__FILE__, 'phoenix_media_rename_activate');
 
-function pmr_activate() {
+function phoenix_media_rename_activate() {
 	add_option('Activated_phoenix_media_rename', 'phoenix-media-rename');
 	add_option('pmr_update_db_table', constant('PHOENIX_MEDIA_RENAME_SCHEMA_VERSION'));
 
@@ -82,7 +86,7 @@ function pmr_activate() {
 			//change active site
 			switch_to_blog($subsite->blog_id);
 			//create table in site database
-			pmr_db::pmr_update_db_table();
+			phoenix_media_rename_db::update_db_table();
 
 			restore_current_blog();
 			//update plugin option
@@ -91,7 +95,7 @@ function pmr_activate() {
 	} else {
 	//single site
 		//create table
-		pmr_db::pmr_update_db_table();
+		phoenix_media_rename_db::update_db_table();
 		//update plugin option
 		update_option('pmr_table_installed', true);
 	}
@@ -101,15 +105,15 @@ add_action('plugins_loaded', 'pmr_update_db');
 
 function pmr_update_db() {
 	if (get_option('pmr_db_version') !== constant('PHOENIX_MEDIA_RENAME_SCHEMA_VERSION')) {
-		pmr_db::pmr_update_db_table();
+		phoenix_media_rename_db::update_db_table();
 
 		update_option('pmr_db_version', constant('PHOENIX_MEDIA_RENAME_SCHEMA_VERSION'));
 	}
 }
 
-add_action('in_plugin_update_message-phoenix-media-rename/phoenix-media-rename.php', 'pmr_plugin_update_message', 10, 2);
+add_action('in_plugin_update_message-phoenix-media-rename/phoenix-media-rename.php', 'phoenix_media_rename_plugin_update_message', 10, 2);
 
-function pmr_plugin_update_message($plugin_data, $new_data) {
+function phoenix_media_rename_plugin_update_message($plugin_data, $new_data) {
 	if (isset($plugin_data['update']) && $plugin_data['update'] && isset($new_data->upgrade_notice)) {
 		printf(
 			'<div class="update-message"><p><strong>%s</strong>: %s</p></div>',
