@@ -15,7 +15,7 @@
 			"step": "installPlugin",
 			"pluginZipFile": {
 				"resource": "url",
-				"url": "https:\/\/downloads.wordpress.org\/plugin\/phoenix-media-rename.3.11.7.zip"
+				"url": "https:\/\/downloads.wordpress.org\/plugin\/phoenix-media-rename.3.12.0.zip"
 			},
 			"options": {
 				"activate": true
