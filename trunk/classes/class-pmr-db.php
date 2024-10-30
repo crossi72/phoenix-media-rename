@@ -105,7 +105,7 @@ class phoenix_media_rename_db{
 	 *
 	 * @return void
 	 */
-	static function pmr_create_db_table(){
+	static function phoenix_media_rename_create_db_table(){
 		global $wpdb;
 
 		//set charset

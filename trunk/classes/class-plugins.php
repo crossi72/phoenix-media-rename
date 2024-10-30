@@ -31,10 +31,10 @@ if (phoenix_media_rename_plugins::is_plugin_active(constant("pluginAltTextAI")))
 	$options = new phoenix_media_rename_options();
 
 	if ($options->option_enable_alttext_integration){
-		add_action('atai_alttext_generated', 'pmr_on_alttext_generated', 10, 2);
+		add_action('atai_alttext_generated', 'phoenix_media_rename_on_alttext_generated', 10, 2);
 	}
 
-	function pmr_on_alttext_generated($attachment_id, $alt_text) {
+	function phoenix_media_rename_on_alttext_generated($attachment_id, $alt_text) {
 		Phoenix_Media_Rename::do_rename($attachment_id, $alt_text);
 	}
 }
@@ -88,7 +88,7 @@ class phoenix_media_rename_plugins{
 		//compose Smart Slider table name
 		$tablename = $wpdb->prefix . 'nextend2_smartslider3_slides';
 
-		if (! pmr_lib::table_exist($tablename)){
+		if (! phoenix_media_rename_lib::table_exist($tablename)){
 			//if table does not exist, exit and return false
 			return false;
 		}else{
@@ -103,7 +103,7 @@ class phoenix_media_rename_plugins{
 
 		$tablename = $wpdb->prefix . 'nextend2_image_storage';
 
-		if (pmr_lib::table_exist($tablename)){
+		if (phoenix_media_rename_lib::table_exist($tablename)){
 			//if table exist, change file name (unnecessary table, does not exit if table is missing)
 			$sqlQuery = "UPDATE ". $tablename ." SET image = REPLACE(image, %s, %s) WHERE image LIKE %s";
 
@@ -482,8 +482,8 @@ class phoenix_media_rename_plugins{
 				break;
 				default:
 					//update wp_postmeta
-					// $meta[0] = pmr_lib::unserialize_deep($meta[0]);
-					// $new_meta = pmr_lib::replace_media_urls($meta[0], $searches, $replaces);
+					// $meta[0] = phoenix_media_rename_lib::unserialize_deep($meta[0]);
+					// $new_meta = phoenix_media_rename_lib::replace_media_urls($meta[0], $searches, $replaces);
 					// //there is an issue with Elementor, check when _wp_page_template changes
 					// if ($new_meta != $meta[0]) update_post_meta($post_id, $key, $new_meta, $meta[0]);
 			}

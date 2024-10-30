@@ -65,7 +65,7 @@ class Phoenix_Media_Rename {
 			//set bulk rename process as stopped
 			$this->reset_bulk_rename();
 
-			$file_parts = pmr_lib::get_file_parts($post_id);
+			$file_parts = phoenix_media_rename_lib::get_file_parts($post_id);
 			echo $this->get_filename_field($post_id, $file_parts['filename'], $file_parts['extension']);
 		}
 	}
@@ -79,7 +79,7 @@ class Phoenix_Media_Rename {
 	 */
 	function add_filename_field($form_fields, $post) {
 		if (isset($GLOBALS['post']) && $GLOBALS['post']->post_type=='attachment') {
-			$file_parts = pmr_lib::get_file_parts($GLOBALS['post']->ID);
+			$file_parts = phoenix_media_rename_lib::get_file_parts($GLOBALS['post']->ID);
 			$form_fields['mr_filename']=array(
 				'label' => __('Filename', constant('PHOENIX_MEDIA_RENAME_TEXT_DOMAIN')),
 				'input' => 'html',
@@ -336,7 +336,7 @@ class Phoenix_Media_Rename {
 						$current_image_index = $matches[0];
 
 						//check if image index start with '0'
-						$zeroes = pmr_lib::starts_with($current_image_index, '0');
+						$zeroes = phoenix_media_rename_lib::starts_with($current_image_index, '0');
 
 						if ($zeroes != -1){
 							//image index start with one or more '0'
@@ -548,7 +548,7 @@ class Phoenix_Media_Rename {
 	 */
 	static function do_rename($attachment_id, $new_filename, $retitle = 0, $title_from_post = 0, $name_from_post = 0, $check_post_parent = true, $force_lowercase = false, $force_serializiation = false, $rename = true) {
 		//Variables
-		$options = new pmr_options();
+		$options = new phoenix_media_rename_options();
 		$post = get_post($attachment_id);
 
 		//Change the attachment post
@@ -609,7 +609,7 @@ class Phoenix_Media_Rename {
 			$searches = self::get_attachment_urls($attachment_id, phoenix_media_rename_operation::search, $file_info, $file_info->new_filename);
 
 			//Validations
-			$validation_message = pmr_lib::validate_filename($post, $attachment_id, $options, $file_info);
+			$validation_message = phoenix_media_rename_lib::validate_filename($post, $attachment_id, $options, $file_info);
 
 			if ($validation_message != ''){
 				//validation error: stop renaming process and notify user
@@ -844,8 +844,8 @@ class Phoenix_Media_Rename {
 						phoenix_media_rename_plugins::update_elementor_data($post->ID, $key, $searches, $replaces);
 					} else {
 							//update wp_postmeta
-							$meta[0] = pmr_lib::unserialize_deep($meta[0]);
-							$new_meta = pmr_lib::replace_media_urls($meta[0], $searches, $replaces);
+							$meta[0] = phoenix_media_rename_lib::unserialize_deep($meta[0]);
+							$new_meta = phoenix_media_rename_lib::replace_media_urls($meta[0], $searches, $replaces);
 							if ($new_meta != $meta[0]) update_post_meta($post->ID, $key, $new_meta, $meta[0]);
 					}
 				}
@@ -1077,11 +1077,11 @@ class phoenix_media_rename_file_info{
 	 *
 	 * @param integer $attachment_id ID of the post of the media file (post_type: attachment)
 	 * @param string $new_filename new file name
-	 * @param pmr_options $options Phoenix Media Rename options
+	 * @param phoenix_media_rename_options $options Phoenix Media Rename options
 	 * @param string $post_parent_category name of the main category of the post parent
 	 */
 	public function __construct($attachment_id, $new_filename, $options, $post_parent_category){
-		$file_parts = pmr_lib::get_file_parts($attachment_id);
+		$file_parts = phoenix_media_rename_lib::get_file_parts($attachment_id);
 		$this->new_filename_unsanitized = $new_filename;
 		$this->base_url = $file_parts['baseurl'];
 		$this->file_path = $file_parts['filepath'];
@@ -1093,7 +1093,7 @@ class phoenix_media_rename_file_info{
 		$this->filename = $file_parts['filename'];
 		$this->original_filename = $file_parts['originalfilename'];
 		$this->new_filename = $new_filename;
-		$this->new_filename = pmr_lib::clear_filename($options, $post_parent_category, $this);
+		$this->new_filename = phoenix_media_rename_lib::clear_filename($options, $post_parent_category, $this);
 
 		$this->file_abs_path = $this->file_path . $this->file_old_filename . '.' .$this->file_extension;
 		$this->file_abs_dir = $this->file_path;

@@ -58,8 +58,8 @@ class phoenix_media_rename_options {
 		$local_options = $this->get_all_options();
 
 		foreach ($local_options as $option) {
-			$option['value'] = pmr_lib::unserialize_deep($option['value']);
-			$new_option = pmr_lib::replace_media_urls($option['value'], $searches, $replaces);
+			$option['value'] = phoenix_media_rename_lib::unserialize_deep($option['value']);
+			$new_option = phoenix_media_rename_lib::replace_media_urls($option['value'], $searches, $replaces);
 			if ($new_option != $option['value']) update_option($option['name'], $new_option);
 		}
 	}

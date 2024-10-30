@@ -404,7 +404,7 @@ class phoenix_media_rename_lib{
 	 */
 	private static function increment_filename($filename){
 		//if filename ends with '-scaled', remove the string
-		if (pmr_lib::ends_with($filename, '-scaled')){
+		if (phoenix_media_rename_lib::ends_with($filename, '-scaled')){
 			$filename = substr($filename, 0, strlen($filename) - strlen('-scaled'));
 			$add_suffix = true;
 		} else {
