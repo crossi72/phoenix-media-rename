@@ -688,13 +688,13 @@ class Phoenix_Media_Rename {
 
 				if (phoenix_media_rename_plugins::is_plugin_active(constant("pluginRedirection"))) {
 					//plugin is active
-					//Adding Redirection from old ORL to the new one
+					//Adding Redirection from old URL to the new one
 					phoenix_media_rename_plugins::add_redirection($file_info->file_old_filename, $file_info->new_filename, $file_info->file_extension, $file_info->file_subfolder, $options->option_create_redirection, constant("pluginRedirection"));
 				}
 
 				if (phoenix_media_rename_plugins::is_plugin_active(constant("pluginRankMath"))) {
 					//plugin is active
-					//Adding Redirection from old ORL to the new one
+					//Adding Redirection from old URL to the new one
 					phoenix_media_rename_plugins::add_redirection($file_info->file_old_filename, $file_info->new_filename, $file_info->file_extension, $file_info->file_subfolder, $options->option_create_redirection, constant("pluginRankMath"));
 				}
 
