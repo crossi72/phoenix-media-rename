@@ -303,7 +303,7 @@ class Phoenix_Media_Rename {
 						$force_serializiation = true;
 					};
 
-				}elseif ($bulk_rename_in_progress){
+				} elseif ($bulk_rename_in_progress){
 					//bulk rename in progress: build filename
 					//increment image name index
 					$current_image_index = $this->read_db_value('current_image_index');
@@ -313,7 +313,7 @@ class Phoenix_Media_Rename {
 
 					//create filename
 					$new_filename = $this->build_filename($bulk_filename_header, $current_image_index);
-				}else{
+				} else {
 					//bulk rename not in progress: check if filename contains {}
 					//search pattern {number}
 					$re = '/[{][0-9]{1,10}[}]/m';
@@ -353,7 +353,7 @@ class Phoenix_Media_Rename {
 
 						//create filename
 						$new_filename = $this->build_filename($bulk_filename_header, $current_image_index);
-					}	
+					}
 				}
 
 				echo $this->do_rename($attachment_id, $new_filename, $retitle, $title_from_post, $name_from_post, true, false, $force_serializiation, $rename);
