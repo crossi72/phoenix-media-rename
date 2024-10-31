@@ -6,28 +6,30 @@
 
 require_once('class-plugins.php');
 
-#region constants
-
-define("actionRename", "rename");
-define("actionRenameRetitle", "rename_retitle");
-define("actionRetitle", "retitle");
-define("actionRetitleFromPostTitle", "retitle_from_post_title");
-define("actionRenameFromPostTitle", "rename_from_post_title");
-define("actionRenameRetitleFromPostTitle", "rename_retitle_from_post_title");
-define("success", "pmr_renamed");
-define("phoenix_media_rename_table_name", "pmr_status");
-
-// define ('PHOENIX_MEDIA_RENAME_BULK_STATUS', 'phoenix-media-rename');
-
+/**
+ * Enumerative type operation
+ */
 abstract class phoenix_media_rename_operation
 {
 	const search = 0;
 	const replace = 1;
 }
 
-#endregion
-
 class Phoenix_Media_Rename {
+	#region constants
+
+	private const actionRename = 'rename';
+	private const actionRenameRetitle = 'rename_retitle';
+	private const actionRetitle = 'retitle';
+	private const actionRetitleFromPostTitle = 'retitle_from_post_title';
+	private const actionRenameFromPostTitle = 'rename_from_post_title';
+	private const actionRenameRetitleFromPostTitle = 'rename_retitle_from_post_title';
+	private const success = 'pmr_renamed';
+	private const phoenix_media_rename_table_name = 'pmr_status';
+
+	// define ('PHOENIX_MEDIA_RENAME_BULK_STATUS', 'phoenix-media-rename');
+
+	#endregion
 
 	private $is_media_rename_page;
 	private $nonce_printed;
@@ -114,16 +116,16 @@ class Phoenix_Media_Rename {
 	 */
 	function handle_bulk_pnx_rename_form_submit() {
 		if (
-			array_search(constant("actionRename"), $_REQUEST, true) !== FALSE
-			|| array_search(constant("actionRenameRetitle"), $_REQUEST, true) !== FALSE
-			|| array_search(constant("actionRetitle"), $_REQUEST, true) !== FALSE
-			|| array_search(constant("actionRetitleFromPostTitle"), $_REQUEST, true) !== FALSE
+			array_search(self::actionRename, $_REQUEST, true) !== FALSE
+			|| array_search(self::actionRenameRetitle, $_REQUEST, true) !== FALSE
+			|| array_search(self::actionRetitle, $_REQUEST, true) !== FALSE
+			|| array_search(self::actionRetitleFromPostTitle, $_REQUEST, true) !== FALSE
 			) {
 
 			//set bulk rename process as stopped
 			$this->reset_bulk_rename();
 
-			wp_redirect(add_query_arg(array(constant("success") => 1), wp_get_referer()));
+			wp_redirect(add_query_arg(array(self::success => 1), wp_get_referer()));
 			exit;
 		}
 	}
@@ -134,7 +136,7 @@ class Phoenix_Media_Rename {
 	 * @return void
 	 */
 	function show_bulk_pnx_rename_success_notice() {
-		if(isset($_REQUEST[constant("success")])) {
+		if(isset($_REQUEST[self::success])) {
 			echo '<div class="updated"><p>'. __('Medias successfully renamed!', constant('PHOENIX_MEDIA_RENAME_TEXT_DOMAIN')) .'</p></div>';
 		}
 	}
@@ -152,12 +154,12 @@ class Phoenix_Media_Rename {
 			<script type="text/javascript">
 				MRSettings = {
 					'labels': {
-						'<?php echo constant("actionRename") ?>': '<?php _e('Rename', constant('PHOENIX_MEDIA_RENAME_TEXT_DOMAIN')) ?>',
-						'<?php echo constant("actionRenameRetitle") ?>': '<?php _e('Rename & Retitle', constant('PHOENIX_MEDIA_RENAME_TEXT_DOMAIN')) ?>',
-						'<?php echo constant("actionRetitle") ?>': '<?php _e('Retitle', constant('PHOENIX_MEDIA_RENAME_TEXT_DOMAIN')) ?>',
-						'<?php echo constant("actionRetitleFromPostTitle") ?>': '<?php _e('Retitle from Post', constant('PHOENIX_MEDIA_RENAME_TEXT_DOMAIN')) ?>',
-						'<?php echo constant("actionRenameFromPostTitle") ?>': '<?php _e('Rename from Post', constant('PHOENIX_MEDIA_RENAME_TEXT_DOMAIN')) ?>',
-						'<?php echo constant("actionRenameRetitleFromPostTitle") ?>': '<?php _e('Rename & Retitle from Post', constant('PHOENIX_MEDIA_RENAME_TEXT_DOMAIN')) ?>'
+						'<?php echo self::actionRename ?>': '<?php _e('Rename', constant('PHOENIX_MEDIA_RENAME_TEXT_DOMAIN')) ?>',
+						'<?php echo self::actionRenameRetitle ?>': '<?php _e('Rename & Retitle', constant('PHOENIX_MEDIA_RENAME_TEXT_DOMAIN')) ?>',
+						'<?php echo self::actionRetitle ?>': '<?php _e('Retitle', constant('PHOENIX_MEDIA_RENAME_TEXT_DOMAIN')) ?>',
+						'<?php echo self::actionRetitleFromPostTitle ?>': '<?php _e('Retitle from Post', constant('PHOENIX_MEDIA_RENAME_TEXT_DOMAIN')) ?>',
+						'<?php echo self::actionRenameFromPostTitle ?>': '<?php _e('Rename from Post', constant('PHOENIX_MEDIA_RENAME_TEXT_DOMAIN')) ?>',
+						'<?php echo self::actionRenameRetitleFromPostTitle ?>': '<?php _e('Rename & Retitle from Post', constant('PHOENIX_MEDIA_RENAME_TEXT_DOMAIN')) ?>'
 					}
 				};
 			</script>
@@ -218,7 +220,7 @@ class Phoenix_Media_Rename {
 		global $wpdb;
 
 		//check if there are values in table
-		$result = $wpdb->get_var("SELECT " . $field . " FROM " . $wpdb->prefix . constant('phoenix_media_rename_table_name'));
+		$result = $wpdb->get_var("SELECT " . $field . " FROM " . $wpdb->prefix . self::phoenix_media_rename_table_name);
 
 		return $result;
 	}
@@ -234,19 +236,19 @@ class Phoenix_Media_Rename {
 		global $wpdb;
 
 		//check if there are values in table
-		$records = $wpdb->get_var("SELECT IFNULL(COUNT(*), 0) FROM " . $wpdb->prefix . constant('phoenix_media_rename_table_name'));
+		$records = $wpdb->get_var("SELECT IFNULL(COUNT(*), 0) FROM " . $wpdb->prefix . self::phoenix_media_rename_table_name);
 
 		if ($records > 1){
 			//error in table content, truncate table to reset data
 			$wpdb->query(
 				$wpdb->prepare(
-					"TRUNCATE TABLE " . $wpdb->prefix . constant('phoenix_media_rename_table_name')
+					"TRUNCATE TABLE " . $wpdb->prefix . self::phoenix_media_rename_table_name
 				)
 			);
 		}elseif ($records == 0){
 			//table is empty, insert new row
 			$wpdb->insert(
-				$wpdb->prefix . constant('phoenix_media_rename_table_name'), 
+				$wpdb->prefix . self::phoenix_media_rename_table_name, 
 				array(
 					$field => $value, 
 				)
@@ -254,7 +256,7 @@ class Phoenix_Media_Rename {
 		} else {
 			//table contains a record, update data
 			$wpdb->update(
-				$wpdb->prefix . constant('phoenix_media_rename_table_name'), 
+				$wpdb->prefix . self::phoenix_media_rename_table_name, 
 				array(
 					$field => $value, 
 				),
@@ -374,8 +376,8 @@ class Phoenix_Media_Rename {
 	 */
 	private function title_from_post(){
 		//if action is "actionRenameFromPostTitle" or "actionRenameRetitleFromPostTitle" retrieve title for post related to media file to generate attachment title
-		if ($_REQUEST['type'] == constant("actionRenameRetitleFromPostTitle")
-			|| $_REQUEST['type'] == constant("actionRetitleFromPostTitle")
+		if ($_REQUEST['type'] == self::actionRenameRetitleFromPostTitle
+			|| $_REQUEST['type'] == self::actionRetitleFromPostTitle
 			) {
 			$result = true;
 		}else{
@@ -393,8 +395,8 @@ class Phoenix_Media_Rename {
 	private function name_from_post(){
 
 		//if action is "actionRenameFromPostTitle" or "actionRenameRetitleFromPostTitle" retrieve title for post related to media file to generate filename
-		if (($_REQUEST['type'] == constant("actionRenameFromPostTitle"))
-			|| ($_REQUEST['type'] == constant("actionRenameRetitleFromPostTitle"))
+		if (($_REQUEST['type'] == self::actionRenameFromPostTitle)
+			|| ($_REQUEST['type'] == self::actionRenameRetitleFromPostTitle)
 			){
 			$result = true;
 		}else{
@@ -414,8 +416,8 @@ class Phoenix_Media_Rename {
 		$result = true;
 
 		if (
-			$_REQUEST['type'] == constant("actionRetitle")
-			|| $_REQUEST['type'] == constant("actionRetitleFromPostTitle")
+			$_REQUEST['type'] == self::actionRetitle
+			|| $_REQUEST['type'] == self::actionRetitleFromPostTitle
 			) {
 			//disable renaming if needed
 			$result = false;
@@ -435,10 +437,10 @@ class Phoenix_Media_Rename {
 
 		//check if retitle is needed
 		if (
-			$_REQUEST['type'] == constant("actionRenameRetitleFromPostTitle")
-			|| $_REQUEST['type'] == constant("actionRetitleFromPostTitle")
-			|| $_REQUEST['type'] == constant("actionRenameRetitle")
-			|| $_REQUEST['type'] == constant("actionRetitle")
+			$_REQUEST['type'] == self::actionRenameRetitleFromPostTitle
+			|| $_REQUEST['type'] == self::actionRetitleFromPostTitle
+			|| $_REQUEST['type'] == self::actionRenameRetitle
+			|| $_REQUEST['type'] == self::actionRetitle
 			) {
 			//enable retitling if needed
 			$result = true;
