@@ -15,7 +15,9 @@ define("actionRetitleFromPostTitle", "retitle_from_post_title");
 define("actionRenameFromPostTitle", "rename_from_post_title");
 define("actionRenameRetitleFromPostTitle", "rename_retitle_from_post_title");
 define("success", "pmr_renamed");
-define("pmrTableName", "pmr_status");
+define("phoenix_media_rename_table_name", "pmr_status");
+
+// define ('PHOENIX_MEDIA_RENAME_BULK_STATUS', 'phoenix-media-rename');
 
 abstract class phoenix_media_rename_operation
 {
@@ -216,7 +218,7 @@ class Phoenix_Media_Rename {
 		global $wpdb;
 
 		//check if there are values in table
-		$result = $wpdb->get_var("SELECT " . $field . " FROM " . $wpdb->prefix . constant('pmrTableName'));
+		$result = $wpdb->get_var("SELECT " . $field . " FROM " . $wpdb->prefix . constant('phoenix_media_rename_table_name'));
 
 		return $result;
 	}
@@ -232,19 +234,19 @@ class Phoenix_Media_Rename {
 		global $wpdb;
 
 		//check if there are values in table
-		$records = $wpdb->get_var("SELECT IFNULL(COUNT(*), 0) FROM " . $wpdb->prefix . constant('pmrTableName'));
+		$records = $wpdb->get_var("SELECT IFNULL(COUNT(*), 0) FROM " . $wpdb->prefix . constant('phoenix_media_rename_table_name'));
 
 		if ($records > 1){
 			//error in table content, truncate table to reset data
 			$wpdb->query(
 				$wpdb->prepare(
-					"TRUNCATE TABLE " . $wpdb->prefix . constant('pmrTableName')
+					"TRUNCATE TABLE " . $wpdb->prefix . constant('phoenix_media_rename_table_name')
 				)
 			);
 		}elseif ($records == 0){
 			//table is empty, insert new row
 			$wpdb->insert(
-				$wpdb->prefix . constant('pmrTableName'), 
+				$wpdb->prefix . constant('phoenix_media_rename_table_name'), 
 				array(
 					$field => $value, 
 				)
@@ -252,7 +254,7 @@ class Phoenix_Media_Rename {
 		} else {
 			//table contains a record, update data
 			$wpdb->update(
-				$wpdb->prefix . constant('pmrTableName'), 
+				$wpdb->prefix . constant('phoenix_media_rename_table_name'), 
 				array(
 					$field => $value, 
 				),
