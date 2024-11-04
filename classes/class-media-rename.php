@@ -100,13 +100,20 @@ class Phoenix_Media_Rename {
 	 */
 	function reset_bulk_rename(){
 		//set index for group rename
-		$this->write_db_value('current_image_index', 0);
+		// $this->write_db_value('current_image_index', 0);
+		setcookie('phoenix_media_rename_current_image_index', '0', time() + 3600); // Expires in 1 hour
+
 		//reset the bulk rename flag
-		$this->write_db_value('bulk_rename_in_progress', false);
+		// $this->write_db_value('bulk_rename_in_progress', false);
+		setcookie('phoenix_media_rename_bulk_rename_in_progress', 'false', time() + 3600); // Expires in 1 hour
+		
 		//reset the bulk rename from post flag
-		$this->write_db_value('bulk_rename_from_post_in_progress', false);
+		// $this->write_db_value('bulk_rename_from_post_in_progress', false);
+		setcookie('phoenix_media_rename_bulk_rename_from_post_in_progress', 'false', time() + 3600); // Expires in 1 hour
+
 		//reset the bulk rename filename header
-		$this->write_db_value('bulk_filename_header', '');
+		// $this->write_db_value('bulk_filename_header', '');
+		setcookie('phoenix_media_rename_bulk_rename_bulk_filename_header', '', time() + 3600); // Expires in 1 hour
 }
 
 	/**
@@ -281,7 +288,9 @@ class Phoenix_Media_Rename {
 			$title_from_post = $this->title_from_post();
 
 			$new_filename = $_REQUEST['new_filename'];
-			$bulk_rename_in_progress = $this->read_db_value('bulk_rename_in_progress');
+			// $bulk_rename_in_progress = $this->read_db_value('bulk_rename_in_progress');
+			$bulk_rename_in_progress = $_COOKIE['phoenix_media_rename_bulk_rename_in_progress'];
+
 			$attachment_id = $_REQUEST['post_id'];
 			$force_serializiation = false;
 
@@ -307,13 +316,19 @@ class Phoenix_Media_Rename {
 						$force_serializiation = true;
 					};
 
-				} elseif ($bulk_rename_in_progress){
+				} elseif ($bulk_rename_in_progress != 'false'){
 					//bulk rename in progress: build filename
-					//increment image name index
-					$current_image_index = $this->read_db_value('current_image_index');
-					$bulk_filename_header = $this->read_db_value('bulk_filename_header');
+					// $current_image_index = $this->read_db_value('current_image_index');
+					//get cookie value and convert it to integer
+					$current_image_index = (int)$_COOKIE['phoenix_media_rename_current_image_index'];
 
-					$this->write_db_value('current_image_index', ++$current_image_index);
+					//get filename header
+					// $bulk_filename_header = $this->read_db_value('bulk_filename_header');
+					$bulk_filename_header = $_COOKIE['phoenix_media_rename_bulk_filename_header'];
+
+					//increment image name index
+					// $this->write_db_value('current_image_index', ++$current_image_index);
+					setcookie('phoenix_media_rename_current_image_index', ++$current_image_index, time() + 3600); // Expires in 1 hour
 
 					//create filename
 					$new_filename = $this->build_filename($bulk_filename_header, $current_image_index);
@@ -327,7 +342,8 @@ class Phoenix_Media_Rename {
 					//if new filename contains {number}, serialize following file names
 					if ($matches){
 						//notify the start of bulk rename process
-						$this->write_db_value('bulk_rename_in_progress', true);
+						// $this->write_db_value('bulk_rename_in_progress', true);
+						setcookie("phoenix_media_rename_bulk_rename_in_progress", 'true', time() + 3600); // Expires in 1 hour
 
 						//extract file header
 						$bulk_filename_header = preg_replace($re, '', $new_filename);
@@ -351,9 +367,11 @@ class Phoenix_Media_Rename {
 							$current_image_index = intval($current_image_index);
 						}
 
-						$this->write_db_value('bulk_filename_header', $bulk_filename_header);
+						// $this->write_db_value('bulk_filename_header', $bulk_filename_header);
+						setcookie("phoenix_media_rename_bulk_filename_header", $bulk_filename_header, time() + 3600); // Expires in 1 hour
 
-						$this->write_db_value('current_image_index', $current_image_index);
+						// $this->write_db_value('current_image_index', $current_image_index);
+						setcookie("phoenix_media_rename_current_image_index", $current_image_index, time() + 3600); // Expires in 1 hour
 
 						//create filename
 						$new_filename = $this->build_filename($bulk_filename_header, $current_image_index);
