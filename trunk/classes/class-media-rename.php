@@ -313,7 +313,7 @@ class Phoenix_Media_Rename {
 						$force_serializiation = true;
 					};
 
-				} elseif ($bulk_rename_in_progress != 'false'){
+				} elseif ($bulk_rename_in_progress == 'true'){
 					//bulk rename in progress: build filename
 					$current_image_index = (int)$_COOKIE['phoenix_media_rename_current_image_index'];
 
