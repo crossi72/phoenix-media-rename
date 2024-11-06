@@ -3,7 +3,7 @@ Contributors: crossi72, ShadowsDweller
 Tags: media, file, image, rename, retitle
 Requires at least: 5.0
 Tested up to: 6.6
-Stable tag: 3.12.2
+Stable tag: 3.12.3
 Requires PHP: 7.4
 License: GPL3
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
@@ -75,6 +75,15 @@ Go to the Media section of the admin panel, select the "Rename from Post" or "Re
 Sure, you can use the "do_rename" static function, located at the Phoenix_Media_Rename class. Prototype: do_rename($attachment_id, $new_filename, $retitle = 0, $title_from_post = 0, $name_from_post = 0, $check_post_parent = true ). On success the function returns 1, and on error - the error message.
 The function do_rename is a static method wrapped inside the Phoenix_Media_Rename class: call it using Phoenix_Media_Rename::do_rename
 
+= Does Phoenix Media Rename use cookies?? =
+
+Yes, it uses up to four technical cookies to store informations during the rename process, the cookies are Strict, so they can be accessed only by the same domain and expires after 60 minutes
+These are the cookies and their purpose:
+- phoenix_media_rename_current_image_index, stores current image index during bulk rename operations
+- phoenix_media_rename_bulk_rename_in_progress, store bulk rename status
+- phoenix_media_rename_bulk_rename_from_post_in_progress, store bulk rename status for "rename from post" operation
+- phoenix_media_rename_bulk_rename_bulk_filename_header, store bulk rename constant filename part
+
 = Can I integrate 3rd party plugins? =
 
 Sure, you can use the "pmr_renaming_successful" that fires when the rename process is complete and returns old and new filenames.
@@ -106,6 +115,9 @@ If you would like more features, such as automatic renaming, or a dashboard for 
 6. screenshot-3.jpg
 
 == Changelog ==
+
+= 3.12.3 =
+* replaced the database table with session cookies to record bulk renaming info
 
 = 3.12.0 =
 * changed uninstall procedure
