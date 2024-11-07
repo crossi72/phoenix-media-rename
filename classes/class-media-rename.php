@@ -151,6 +151,11 @@ class Phoenix_Media_Rename {
 	 */
 	function print_js() {
 		if ($this->is_media_rename_page) {
+			//register localizable strings for js
+			$translation_array = array(
+				'no_action_warning' => __('No bulk action selected.
+Please select a bulk action before pressing the "Apply" button.', constant('PHOENIX_MEDIA_RENAME_TEXT_DOMAIN')),
+			);
 			wp_enqueue_script(constant('PHOENIX_MEDIA_RENAME_TEXT_DOMAIN'), plugins_url('js/scripts.min.js', dirname(__FILE__)), '', '4.0.1');
 			?>
 
@@ -168,6 +173,8 @@ class Phoenix_Media_Rename {
 			</script>
 
 			<?php
+			//localize registered js
+			wp_localize_script(constant('PHOENIX_MEDIA_RENAME_TEXT_DOMAIN'), 'phoenix_media_rename_strings', $translation_array);
 		}
 
 		if(get_current_screen()->id == 'settings_page_pmr-setting-admin') {

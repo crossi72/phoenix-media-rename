@@ -101,9 +101,9 @@ function phoenix_media_rename_activate() {
 	}
 }
 
-add_action('plugins_loaded', 'pmr_update_db');
+add_action('plugins_loaded', 'phoenix_media_rename_update_db');
 
-function pmr_update_db() {
+function phoenix_media_rename_update_db() {
 	if (get_option('pmr_db_version') !== constant('PHOENIX_MEDIA_RENAME_SCHEMA_VERSION')) {
 		phoenix_media_rename_db::update_db_table();
 

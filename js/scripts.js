@@ -148,7 +148,7 @@ class PhoenixMediaRename {
 
 		if (this.type == '-1'){
 			//no action selected, notify user and exit
-			alert('No bulk action selected.\nPlease select a bulk action before pressing the "Apply" button.');
+			alert(phoenix_media_rename_strings.no_action_warning);
 			return;
 		}
 
