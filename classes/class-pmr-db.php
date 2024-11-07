@@ -70,7 +70,7 @@ class phoenix_media_rename_db{
 		global $wpdb;
 
 		//create sql query
-		$sql = 'DROP TABLE IF EXISTS ' . $wpdb->prefix . constant('pmrTableName');
+		$sql = 'DROP TABLE IF EXISTS ' . $wpdb->prefix . constant('PHOENIX_MEDIA_RENAME_TABLE_NAME');
 
 		$wpdb->query(
 				$sql
@@ -85,7 +85,7 @@ class phoenix_media_rename_db{
 	static function update_db_table(){
 		global $wpdb;
 
-		$table_name = $wpdb->prefix . constant('pmrTableName');
+		$table_name = $wpdb->prefix . constant('PHOENIX_MEDIA_RENAME_TABLE_NAME');
 
 		$sql = "CREATE TABLE " . $table_name . " (
 			id int(11) NOT NULL AUTO_INCREMENT,
@@ -112,7 +112,7 @@ class phoenix_media_rename_db{
 		$charset_collate = $wpdb->get_charset_collate();
 
 		//create sql query
-		$sql = 'CREATE TABLE IF NOT EXISTS ' . $wpdb->prefix . constant('pmrTableName') . ' (
+		$sql = 'CREATE TABLE IF NOT EXISTS ' . $wpdb->prefix . constant('PHOENIX_MEDIA_RENAME_TABLE_NAME') . ' (
 				ID INT NULL DEFAULT 1,
 				bulk_filename_header VARCHAR(250) NULL DEFAULT NULL,
 				bulk_rename_in_progress INT NULL DEFAULT NULL,

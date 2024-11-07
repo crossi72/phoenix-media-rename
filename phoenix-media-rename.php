@@ -20,6 +20,7 @@ defined('ABSPATH') or die();
 define('PHOENIX_MEDIA_RENAME_SCHEMA_VERSION', '1.0.1');
 define ('PMR_BASENAME', plugin_basename(__FILE__));
 define ('PHOENIX_MEDIA_RENAME_TEXT_DOMAIN', 'phoenix-media-rename');
+define ('PHOENIX_MEDIA_RENAME_TABLE_NAME', 'pmr_status');
 
 require_once('classes/class-media-rename.php');
 require_once('classes/class-pmr-options.php');
@@ -77,39 +78,39 @@ register_activation_hook(__FILE__, 'phoenix_media_rename_activate');
 
 function phoenix_media_rename_activate() {
 	add_option('Activated_phoenix_media_rename', 'phoenix-media-rename');
-	add_option('pmr_update_db_table', constant('PHOENIX_MEDIA_RENAME_SCHEMA_VERSION'));
+	// add_option('pmr_update_db_table', constant('PHOENIX_MEDIA_RENAME_SCHEMA_VERSION'));
 
-	// is_multisite() check is important here because get_sites() is not available on single site installs.
-	if (is_multisite()) {
-	//multisite
-		foreach (get_sites() as $subsite) {
-			//change active site
-			switch_to_blog($subsite->blog_id);
-			//create table in site database
-			phoenix_media_rename_db::update_db_table();
+	// // is_multisite() check is important here because get_sites() is not available on single site installs.
+	// if (is_multisite()) {
+	// //multisite
+	// 	foreach (get_sites() as $subsite) {
+	// 		//change active site
+	// 		switch_to_blog($subsite->blog_id);
+	// 		//create table in site database
+	// 		// phoenix_media_rename_db::update_db_table();
 
-			restore_current_blog();
-			//update plugin option
-			update_option('pmr_table_installed', true);
-		}
-	} else {
-	//single site
-		//create table
-		phoenix_media_rename_db::update_db_table();
-		//update plugin option
-		update_option('pmr_table_installed', true);
-	}
+	// 		restore_current_blog();
+	// 		//update plugin option
+	// 		// update_option('pmr_table_installed', true);
+	// 	}
+	// } else {
+	// 	//single site
+	// 	//create table
+	// 	// phoenix_media_rename_db::update_db_table();
+	// 	//update plugin option
+	// 	// update_option('pmr_table_installed', true);
+	// }
 }
 
-add_action('plugins_loaded', 'phoenix_media_rename_update_db');
+// add_action('plugins_loaded', 'phoenix_media_rename_update_db');
 
-function phoenix_media_rename_update_db() {
-	if (get_option('pmr_db_version') !== constant('PHOENIX_MEDIA_RENAME_SCHEMA_VERSION')) {
-		phoenix_media_rename_db::update_db_table();
+// function phoenix_media_rename_update_db() {
+// 	if (get_option('pmr_db_version') !== constant('PHOENIX_MEDIA_RENAME_SCHEMA_VERSION')) {
+// 		phoenix_media_rename_db::update_db_table();
 
-		update_option('pmr_db_version', constant('PHOENIX_MEDIA_RENAME_SCHEMA_VERSION'));
-	}
-}
+// 		update_option('pmr_db_version', constant('PHOENIX_MEDIA_RENAME_SCHEMA_VERSION'));
+// 	}
+// }
 
 add_action('in_plugin_update_message-phoenix-media-rename/phoenix-media-rename.php', 'phoenix_media_rename_plugin_update_message', 10, 2);
 

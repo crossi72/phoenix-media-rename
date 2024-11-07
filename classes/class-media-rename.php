@@ -25,7 +25,6 @@ class Phoenix_Media_Rename {
 	private const actionRenameFromPostTitle = 'rename_from_post_title';
 	private const actionRenameRetitleFromPostTitle = 'rename_retitle_from_post_title';
 	private const success = 'pmr_renamed';
-	private const phoenix_media_rename_table_name = 'pmr_status';
 
 	// define ('PHOENIX_MEDIA_RENAME_BULK_STATUS', 'phoenix-media-rename');
 
@@ -230,7 +229,7 @@ Please select a bulk action before pressing the "Apply" button.', constant('PHOE
 		global $wpdb;
 
 		//check if there are values in table
-		$result = $wpdb->get_var("SELECT " . $field . " FROM " . $wpdb->prefix . self::phoenix_media_rename_table_name);
+		$result = $wpdb->get_var("SELECT " . $field . " FROM " . $wpdb->prefix . constant('PHOENIX_MEDIA_RENAME_TABLE_NAME'));
 
 		return $result;
 	}
@@ -246,19 +245,19 @@ Please select a bulk action before pressing the "Apply" button.', constant('PHOE
 		global $wpdb;
 
 		//check if there are values in table
-		$records = $wpdb->get_var("SELECT IFNULL(COUNT(*), 0) FROM " . $wpdb->prefix . self::phoenix_media_rename_table_name);
+		$records = $wpdb->get_var("SELECT IFNULL(COUNT(*), 0) FROM " . $wpdb->prefix . constant('PHOENIX_MEDIA_RENAME_TABLE_NAME'));
 
 		if ($records > 1){
 			//error in table content, truncate table to reset data
 			$wpdb->query(
 				$wpdb->prepare(
-					"TRUNCATE TABLE " . $wpdb->prefix . self::phoenix_media_rename_table_name
+					"TRUNCATE TABLE " . $wpdb->prefix . constant('PHOENIX_MEDIA_RENAME_TABLE_NAME')
 				)
 			);
 		}elseif ($records == 0){
 			//table is empty, insert new row
 			$wpdb->insert(
-				$wpdb->prefix . self::phoenix_media_rename_table_name, 
+				$wpdb->prefix . constant('PHOENIX_MEDIA_RENAME_TABLE_NAME'),
 				array(
 					$field => $value, 
 				)
@@ -266,7 +265,7 @@ Please select a bulk action before pressing the "Apply" button.', constant('PHOE
 		} else {
 			//table contains a record, update data
 			$wpdb->update(
-				$wpdb->prefix . self::phoenix_media_rename_table_name, 
+				$wpdb->prefix . constant('PHOENIX_MEDIA_RENAME_TABLE_NAME'), 
 				array(
 					$field => $value, 
 				),
