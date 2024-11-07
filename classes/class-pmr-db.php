@@ -55,10 +55,10 @@ class phoenix_media_rename_db{
 	}
 
 	static private function delete_option($option_name){
-		delete_option( $option_name );
+		delete_option($option_name);
 
 		// for site options in Multisite
-		delete_site_option( $option_name );
+		delete_site_option($option_name);
 	}
 
 	/**

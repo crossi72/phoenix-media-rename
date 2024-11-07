@@ -654,7 +654,7 @@ Please select a bulk action before pressing the "Apply" button.', constant('PHOE
 				//rename file
 				$error_message = self::rename_files($options, $post->ID, $file_info);
 
-				if ( $error_message != ''){
+				if ($error_message != ''){
 					//filename failed: block the post update process
 					return $error_message;
 				}
@@ -983,7 +983,7 @@ Please select a bulk action before pressing the "Apply" button.', constant('PHOE
 			'samesite' => 'Strict'
 			);
 
-		setcookie($name, $value, $cookie_options);
+		@setcookie($name, $value, $cookie_options);
 	}
 
 	/**
