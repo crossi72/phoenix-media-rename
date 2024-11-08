@@ -18,7 +18,7 @@ Phoenix icon has been generated using Microsoft Designer
 
 defined('ABSPATH') or die();
 define('PHOENIX_MEDIA_RENAME_SCHEMA_VERSION', '1.0.1');
-define ('PMR_BASENAME', plugin_basename(__FILE__));
+define ('PHOENIX_MEDIA_RENAME_BASENAME', plugin_basename(__FILE__));
 define ('PHOENIX_MEDIA_RENAME_TEXT_DOMAIN', 'phoenix-media-rename');
 define ('PHOENIX_MEDIA_RENAME_TABLE_NAME', 'pmr_status');
 

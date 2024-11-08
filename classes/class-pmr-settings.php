@@ -30,7 +30,7 @@ class phoenix_media_rename_settings_page
 		add_option('pmr_options', array('pmr_category_filename_trailer' => false), '', 'yes');
 		add_option('pmr_options', array('pmr_filename_trailer'), '', 'yes');
 		add_option('pmr_options', array('pmr_enable_alttext_integration'), '', 'yes');
-		add_filter('plugin_action_links_'. PMR_BASENAME, array($this, 'pmr_add_action_links'));
+		add_filter('plugin_action_links_'. PHOENIX_MEDIA_RENAME_BASENAME, array($this, 'pmr_add_action_links'));
 	}
 
 	function pmr_add_action_links ($links) {
