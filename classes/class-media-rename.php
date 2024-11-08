@@ -889,7 +889,7 @@ Please select a bulk action before pressing the "Apply" button.', constant('PHOE
 	 * 
 	 * @return array
 	 */
-	static function update_metadata($old_meta, $new_meta, $attachment_id, $file_info){//, $new_filename, $old_filename, $file_path, $file_parts){
+	static function update_metadata($old_meta, $new_meta, $attachment_id, $file_info){
 		$result = $old_meta;
 
 		//update ShortPixel thumbnails data
@@ -901,7 +901,6 @@ Please select a bulk action before pressing the "Apply" button.', constant('PHOE
 			}
 
 		//add the code to rename original file (if exists)
-
 		foreach ($new_meta as $key => $value) {
 			switch ($key){
 				case 'file':
@@ -917,7 +916,6 @@ Please select a bulk action before pressing the "Apply" button.', constant('PHOE
 						//$result is an array
 						if (! array_key_exists($key, $result)){
 							//add missing keys (if needed)
-							// array_push($result[$key], $value);
 							$result[$key] = $value;
 						}
 					} else {
