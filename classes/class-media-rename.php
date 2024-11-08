@@ -840,6 +840,7 @@ Please select a bulk action before pressing the "Apply" button.', constant('PHOE
 	private static function update_posts($post_types, $searches, $replaces, $old_filename){
 		$i=0;
 
+		//load 100 post at time to avoid high memory usage
 		while ($posts = get_posts(array('post_type' => $post_types, 'post_status' => 'any', 'numberposts' => 100, 'offset' => $i * 100, 's' => $old_filename))) {
 			foreach ($posts as $post) {
 				// Updating post content if necessary

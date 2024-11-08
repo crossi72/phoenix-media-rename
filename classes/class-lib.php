@@ -324,8 +324,8 @@ class phoenix_media_rename_lib{
 	/**
 	 * Unserializes a variable until reaching a non-serialized value
 	 *
-	 * @param string $var
-	 * @return void
+	 * @param string $var variable to deserialize
+	 * @return string unserialized variable
 	 */
 	public static function unserialize_deep($var) {
 		while (is_serialized($var)) {
