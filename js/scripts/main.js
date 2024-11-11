@@ -87,6 +87,8 @@ class PhoenixMediaRename {
 		formData.append('new_filename', field.querySelector('input').value);
 		formData.append('post_id', field.querySelector('input').dataset.postId);
 
+		alert(phoenix_media_rename_values.bulk_test);
+
 		const loader = field.querySelector('.loader');
 		const error = field.querySelector('.error');
 		const success = field.querySelector('.success');
@@ -145,6 +147,8 @@ class PhoenixMediaRename {
 			//list media page: get selected operation
 			this.type = document.querySelector('#bulk-action-selector-top').value;
 		}
+
+		alert(phoenix_media_rename_values.bulk_test);
 
 		if (this.type == '-1'){
 			//no action selected, notify user and exit
