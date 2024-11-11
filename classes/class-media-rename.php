@@ -27,6 +27,7 @@ class Phoenix_Media_Rename {
 	private const success = 'pmr_renamed';
 	private const main_js_handle = 'phoenix-media-rename-main-js';
 	private const options_js_handle = 'phoenix-media-rename-options-js';
+	private const css_handle = 'phoenix-media-rename-options-js';
 
 	// define ('PHOENIX_MEDIA_RENAME_BULK_STATUS', 'phoenix-media-rename');
 
@@ -191,7 +192,7 @@ Please select a bulk action before pressing the "Apply" button.', constant('PHOE
 	 */
 	function print_css() {
 		if ($this->is_media_rename_page) {
-			wp_enqueue_style('phoenix-media-rename', plugins_url('css/style.css', dirname(__FILE__)));
+			wp_enqueue_style(self::css_handle, plugins_url('css/style.css', dirname(__FILE__)));
 		}
 	}
 
@@ -987,7 +988,7 @@ Please select a bulk action before pressing the "Apply" button.', constant('PHOE
 
 		@setcookie($name, $value, $cookie_options);
 
-		// // wp_add_inline_script(self::main_js_handle, 'let bulk_status = 1;');
+		// wp_add_inline_script(self::main_js_handle, 'let bulk_status = 1;');
 		// $pmr_values = array (
 		// 	'bulk_status' => false,
 		// 	'bulk_test' => 1,
