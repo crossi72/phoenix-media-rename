@@ -25,6 +25,9 @@ class Phoenix_Media_Rename {
 	private const actionRenameFromPostTitle = 'rename_from_post_title';
 	private const actionRenameRetitleFromPostTitle = 'rename_retitle_from_post_title';
 	private const success = 'pmr_renamed';
+	private const main_js_handle = 'phoenix-media-rename-main-js';
+	private const options_js_handle = 'phoenix-media-rename-options-js';
+	private const css_handle = 'phoenix-media-rename-options-js';
 
 	// define ('PHOENIX_MEDIA_RENAME_BULK_STATUS', 'phoenix-media-rename');
 
@@ -65,8 +68,8 @@ class Phoenix_Media_Rename {
 	function add_filename_column_content($column_name, $post_id) {
 		if ($column_name == 'filename') {
 
-			//set bulk rename process as stopped
-			$this->reset_bulk_rename();
+			// //set bulk rename process as stopped
+			// $this->reset_bulk_rename();
 
 			$file_parts = phoenix_media_rename_lib::get_file_parts($post_id);
 			echo $this->get_filename_field($post_id, $file_parts['filename'], $file_parts['extension']);
@@ -143,6 +146,14 @@ class Phoenix_Media_Rename {
 		}
 	}
 
+	function init_temporary_data() {
+		$screen = get_current_screen();
+		if ($screen->id === 'upload') {
+			//set bulk rename process as stopped
+			$this->reset_bulk_rename();
+		}
+	}
+
 	/**
 	 * Print the JS code only on media.php and media-upload.php pages
 	 *
@@ -155,7 +166,7 @@ class Phoenix_Media_Rename {
 				'no_action_warning' => __('No bulk action selected.
 Please select a bulk action before pressing the "Apply" button.', constant('PHOENIX_MEDIA_RENAME_TEXT_DOMAIN')),
 			);
-			wp_enqueue_script(constant('PHOENIX_MEDIA_RENAME_TEXT_DOMAIN'), plugins_url('js/scripts.min.js', dirname(__FILE__)), '', '4.0.1');
+			wp_enqueue_script(self::main_js_handle, plugins_url('js/scripts.min.js', dirname(__FILE__)), '', '4.0.1');
 			?>
 
 			<script type="text/javascript">
@@ -173,11 +184,11 @@ Please select a bulk action before pressing the "Apply" button.', constant('PHOE
 
 			<?php
 			//localize registered js
-			wp_localize_script(constant('PHOENIX_MEDIA_RENAME_TEXT_DOMAIN'), 'phoenix_media_rename_strings', $translation_array);
+			wp_localize_script(self::main_js_handle, 'phoenix_media_rename_strings', $translation_array);
 		}
 
 		if(get_current_screen()->id == 'settings_page_pmr-setting-admin') {
-			wp_enqueue_script(constant('PHOENIX_MEDIA_RENAME_TEXT_DOMAIN'), plugins_url('js/options.min.js', dirname(__FILE__)), '', '4.0.0');
+			wp_enqueue_script(self::options_js_handle, plugins_url('js/options.min.js', dirname(__FILE__)), '', '4.0.0');
 		}
 	}
 
@@ -188,7 +199,7 @@ Please select a bulk action before pressing the "Apply" button.', constant('PHOE
 	 */
 	function print_css() {
 		if ($this->is_media_rename_page) {
-			wp_enqueue_style('phoenix-media-rename', plugins_url('css/style.css', dirname(__FILE__)));
+			wp_enqueue_style(self::css_handle, plugins_url('css/style.css', dirname(__FILE__)));
 		}
 	}
 
@@ -840,6 +851,7 @@ Please select a bulk action before pressing the "Apply" button.', constant('PHOE
 	private static function update_posts($post_types, $searches, $replaces, $old_filename){
 		$i=0;
 
+		//load 100 post at time to avoid high memory usage
 		while ($posts = get_posts(array('post_type' => $post_types, 'post_status' => 'any', 'numberposts' => 100, 'offset' => $i * 100, 's' => $old_filename))) {
 			foreach ($posts as $post) {
 				// Updating post content if necessary
@@ -889,7 +901,7 @@ Please select a bulk action before pressing the "Apply" button.', constant('PHOE
 	 * 
 	 * @return array
 	 */
-	static function update_metadata($old_meta, $new_meta, $attachment_id, $file_info){//, $new_filename, $old_filename, $file_path, $file_parts){
+	static function update_metadata($old_meta, $new_meta, $attachment_id, $file_info){
 		$result = $old_meta;
 
 		//update ShortPixel thumbnails data
@@ -901,7 +913,6 @@ Please select a bulk action before pressing the "Apply" button.', constant('PHOE
 			}
 
 		//add the code to rename original file (if exists)
-
 		foreach ($new_meta as $key => $value) {
 			switch ($key){
 				case 'file':
@@ -917,7 +928,6 @@ Please select a bulk action before pressing the "Apply" button.', constant('PHOE
 						//$result is an array
 						if (! array_key_exists($key, $result)){
 							//add missing keys (if needed)
-							// array_push($result[$key], $value);
 							$result[$key] = $value;
 						}
 					} else {
@@ -984,6 +994,14 @@ Please select a bulk action before pressing the "Apply" button.', constant('PHOE
 			);
 
 		@setcookie($name, $value, $cookie_options);
+
+		// $pmr_values = array (
+		// 	'bulk_status' => false,
+		// 	'bulk_test' => 1,
+		// );
+
+		// //pass values to js
+		// wp_localize_script(self::main_js_handle, 'phoenix_media_rename_values', $pmr_values);
 	}
 
 	/**
