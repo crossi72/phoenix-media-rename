@@ -993,14 +993,6 @@ Please select a bulk action before pressing the "Apply" button.', constant('PHOE
 	 * @return void
 	 */
 	private function set_cookie($name, $value){
-		// $pmr_values = array (
-		// 	'bulk_status' => 'test',
-		// 	'bulk_test' => '1',
-		// );
-
-		// //pass values to js
-		// wp_localize_script(self::main_js_handle, 'phoenix_media_rename_values', $pmr_values);
-
 		$cookie_options = array (
 			'expires' => time() + 3600, // Expires in 1 hour
 			'samesite' => 'Strict'
