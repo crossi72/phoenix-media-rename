@@ -146,9 +146,13 @@ class Phoenix_Media_Rename {
 		}
 	}
 
+	/**
+	 * Handles initialization after media library page has bee loaded
+	 *
+	 * @return void
+	 */
 	function init_temporary_data() {
-		$screen = get_current_screen();
-		if ($screen->id === 'upload') {
+		if (get_current_screen()->id === 'upload') {
 			//set bulk rename process as stopped
 			$this->reset_bulk_rename();
 		}
@@ -167,6 +171,7 @@ class Phoenix_Media_Rename {
 Please select a bulk action before pressing the "Apply" button.', constant('PHOENIX_MEDIA_RENAME_TEXT_DOMAIN')),
 			);
 			wp_enqueue_script(self::main_js_handle, plugins_url('js/scripts.min.js', dirname(__FILE__)), '', '4.0.1');
+			// wp_enqueue_script(self::main_js_handle, plugins_url('js/scripts/main.js', dirname(__FILE__)), '', '4.0.1');
 			?>
 
 			<script type="text/javascript">
@@ -988,20 +993,20 @@ Please select a bulk action before pressing the "Apply" button.', constant('PHOE
 	 * @return void
 	 */
 	private function set_cookie($name, $value){
+		// $pmr_values = array (
+		// 	'bulk_status' => 'test',
+		// 	'bulk_test' => '1',
+		// );
+
+		// //pass values to js
+		// wp_localize_script(self::main_js_handle, 'phoenix_media_rename_values', $pmr_values);
+
 		$cookie_options = array (
 			'expires' => time() + 3600, // Expires in 1 hour
 			'samesite' => 'Strict'
 			);
 
 		@setcookie($name, $value, $cookie_options);
-
-		// $pmr_values = array (
-		// 	'bulk_status' => false,
-		// 	'bulk_test' => 1,
-		// );
-
-		// //pass values to js
-		// wp_localize_script(self::main_js_handle, 'phoenix_media_rename_values', $pmr_values);
 	}
 
 	/**
