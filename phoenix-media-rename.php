@@ -56,36 +56,38 @@ function phoenix_media_rename_init() {
 	}
 }
 
-add_action('plugins_loaded', 'phoenix_media_rename_load_plugin_textdomain');
+if (is_admin()){
+	add_action('plugins_loaded', 'phoenix_media_rename_load_plugin_textdomain');
 
-function phoenix_media_rename_load_plugin_textdomain() {
-	load_plugin_textdomain(constant('PHOENIX_MEDIA_RENAME_TEXT_DOMAIN'), FALSE, basename(dirname(__FILE__)) . '/languages/');
-}
+	function phoenix_media_rename_load_plugin_textdomain() {
+		load_plugin_textdomain(constant('PHOENIX_MEDIA_RENAME_TEXT_DOMAIN'), FALSE, basename(dirname(__FILE__)) . '/languages/');
+	}
 
-register_uninstall_hook(__FILE__, 'phoenix_media_rename_uninstall');
+	register_uninstall_hook(__FILE__, 'phoenix_media_rename_uninstall');
 
-/**
- * Uninstallation hook: it will delete Phoenix Media Rename table from db
- */
-function phoenix_media_rename_uninstall() {
-	//delete Phoenix Media Rename's options
-	phoenix_media_rename_db::delete_options();
-}
+	/**
+	 * Uninstallation hook: it will delete Phoenix Media Rename table from db
+	 */
+	function phoenix_media_rename_uninstall() {
+		//delete Phoenix Media Rename's options
+		phoenix_media_rename_db::delete_options();
+	}
 
-register_activation_hook(__FILE__, 'phoenix_media_rename_activate');
+	register_activation_hook(__FILE__, 'phoenix_media_rename_activate');
 
-function phoenix_media_rename_activate() {
-	add_option('Activated_phoenix_media_rename', 'phoenix-media-rename');
-}
+	function phoenix_media_rename_activate() {
+		add_option('Activated_phoenix_media_rename', 'phoenix-media-rename');
+	}
 
-add_action('in_plugin_update_message-phoenix-media-rename/phoenix-media-rename.php', 'phoenix_media_rename_plugin_update_message', 10, 2);
+	add_action('in_plugin_update_message-phoenix-media-rename/phoenix-media-rename.php', 'phoenix_media_rename_plugin_update_message', 10, 2);
 
-function phoenix_media_rename_plugin_update_message($plugin_data, $new_data) {
-	if (isset($plugin_data['update']) && $plugin_data['update'] && isset($new_data->upgrade_notice)) {
-		printf(
-			'<div class="update-message"><p><strong>%s</strong>: %s</p></div>',
-			$new_data -> new_version,
-			wpautop($new_data -> upgrade_notice)
-		);
+	function phoenix_media_rename_plugin_update_message($plugin_data, $new_data) {
+		if (isset($plugin_data['update']) && $plugin_data['update'] && isset($new_data->upgrade_notice)) {
+			printf(
+				'<div class="update-message"><p><strong>%s</strong>: %s</p></div>',
+				$new_data -> new_version,
+				wpautop($new_data -> upgrade_notice)
+			);
+		}
 	}
 }
