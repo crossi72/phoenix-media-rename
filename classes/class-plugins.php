@@ -26,10 +26,10 @@ if (phoenix_media_rename_plugins::is_plugin_active(constant("pluginAltTextAI")))
 
 	if ($options->option_enable_alttext_integration){
 		add_action('atai_alttext_generated', 'phoenix_media_rename_on_alttext_generated', 10, 2);
-	}
 
-	function phoenix_media_rename_on_alttext_generated($attachment_id, $alt_text) {
-		Phoenix_Media_Rename::do_rename($attachment_id, $alt_text);
+		function phoenix_media_rename_on_alttext_generated($attachment_id, $alt_text) {
+			Phoenix_Media_Rename::do_rename($attachment_id, $alt_text);
+		}
 	}
 }
 
