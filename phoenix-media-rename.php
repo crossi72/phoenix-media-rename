@@ -4,7 +4,7 @@
 Plugin Name: Phoenix Media Rename
 Plugin URI: https://www.eurosoftlab.com/en/phoenix-media-rename/
 Description: The Phoenix Media Rename plugin allows you to simply rename your media files, once uploaded.
-Version: 3.12.7
+Version: 3.12.8
 Author: crossi72
 Author URI: https://eurosoftlab.com
 Text Domain: phoenix-media-rename
@@ -28,12 +28,11 @@ require_once('classes/class-pmr-settings.php');
 require_once('classes/class-lib.php');
 require_once('classes/class-pmr-db.php');
 
-add_action('plugins_loaded', 'phoenix_media_rename_init');
+//load Phoenix Media Rename only for backend and AJAX calls
+if (is_admin()){
+	add_action('plugins_loaded', 'phoenix_media_rename_init');
 
-function phoenix_media_rename_init() {
-	if (is_admin()){
-		//instantiate class only in admin area
-
+	function phoenix_media_rename_init() {
 		if ((isset($_GET['page'])) && ($_GET['page'] == 'mla-menu')){
 			//disable Phoenix Media Rename on Media Library Assistant custom library page
 			//can't use get_query_var because it works only inside a loop
@@ -54,9 +53,7 @@ function phoenix_media_rename_init() {
 			add_action('admin_footer', array($mr, 'init_temporary_data'));
 		}
 	}
-}
 
-if (is_admin()){
 	add_action('plugins_loaded', 'phoenix_media_rename_load_plugin_textdomain');
 
 	function phoenix_media_rename_load_plugin_textdomain() {
