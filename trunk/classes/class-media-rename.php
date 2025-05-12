@@ -695,14 +695,18 @@ Please select a bulk action before pressing the "Apply" button.', constant('PHOE
 				//remove revision from post type to be updated, revisions will be updated after posts to avoid loops
 				unset($post_types['revision']);
 
-				//updates posts content
-				self::update_posts($post_types, $searches, $replaces, $file_info->file_old_filename);
-
 				if ($options->option_update_revisions) {
 					//update revisions, if option to update revisions is active
-					$post_types['revision'] = array('post_type' => $post_types);
-					self::update_posts($post_types, $searches, $replaces, $file_info->file_old_filename);
+					if (!is_array($post_types)) {
+						//if post types is not an array, convert it to an array
+						$post_types = array($post_types);
+					}
+
+					$post_types['revision'] = 'revision';
 				}
+
+				//updates posts content
+				self::update_posts($post_types, $searches, $replaces, $file_info->file_old_filename);
 
 				$options->update_options($searches, $replaces);
 
