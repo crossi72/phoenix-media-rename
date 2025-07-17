@@ -115,31 +115,42 @@ class phoenix_media_rename_plugins{
 #region WPML compatibility
 
 	/**
-	 * Update Smart WPML custom table
+	 * Update WPML custom table
 	 *
-	 * @param string $extension
+	 * @param int $post_id The ID of the original, renamed attachment.
 	 * @return void
 	 */
 	static function update_wpml($post_id){
 		// Get "trid" of the file
 		$trid = apply_filters('wpml_element_trid', NULL, $post_id, 'post_attachment');
-
+	
 		if (empty($trid)) {
-			//translation not found
-		} else {
-			//get all translations
-			$translations = apply_filters('wpml_get_element_translations', NULL, $trid);
-
-			//iterates through translations to update attachment metadata
-			foreach ($translations as $translation) {
-				if ($post_id == $translation->element_id) {
-					//update filename
-					update_post_meta($translation->element_id, '_wp_attached_file', get_post_meta($translation->element_id, '_wp_attached_file', true));
-
-					//update metadata
-					update_post_meta($translation->element_id, '_wp_attachment_metadata', get_post_meta($translation->element_id, '_wp_attachment_metadata', true));
-				}
+			// Translation group not found, nothing to do.
+			return;
+		}
+	
+		// Get the NEW, updated metadata from the original attachment that was just renamed.
+		$new_attached_file = get_post_meta($post_id, '_wp_attached_file', true);
+		$new_attachment_metadata = get_post_meta($post_id, '_wp_attachment_metadata', true);
+	
+		// If the new metadata is empty, abort to avoid issues.
+		if (empty($new_attached_file) || empty($new_attachment_metadata)) {
+			return;
+		}
+		
+		// Get all translations in the group.
+		$translations = apply_filters('wpml_get_element_translations', NULL, $trid, 'post_attachment');
+	
+		// Iterates through translations to update their attachment metadata.
+		foreach ($translations as $translation) {
+			// Skip the original attachment itself, as it is already updated.
+			if ($post_id == $translation->element_id) {
+				continue;
 			}
+	
+			// Apply the new file path and metadata to the translated attachment.
+			update_post_meta($translation->element_id, '_wp_attached_file', $new_attached_file);
+			update_post_meta($translation->element_id, '_wp_attachment_metadata', $new_attachment_metadata);
 		}
 	}
 
@@ -194,14 +205,14 @@ class phoenix_media_rename_plugins{
 							require_once WP_PLUGIN_DIR . '/redirection/models/group.php';
 
 							$details = [
-								'url'			=> $old_filename,
-								'action_data'	=> [ 'url' => $new_filename ],
-								'action_type'	=> 'url',
-								'title'			=> 'Phoenix Media Rename',
-								'status'		=> 'enabled',
-								'regex'			=> false,
-								'group_id'		=> 2, //set group to "updated posts"
-								'match_type'	=> 'url',
+								'url'            => $old_filename,
+								'action_data'    => [ 'url' => $new_filename ],
+								'action_type'    => 'url',
+								'title'          => 'Phoenix Media Rename',
+								'status'         => 'enabled',
+								'regex'          => false,
+								'group_id'       => 2, //set group to "updated posts"
+								'match_type'     => 'url',
 							];
 
 							//add redirection via Redirection's functions
@@ -244,8 +255,7 @@ class phoenix_media_rename_plugins{
 	 * @param string $new_filename
 	 * @param integer $attachment_id
 	 * @param string $file_path
-	 * 
-	 * @return array
+	 * * @return array
 	 */
 	static function update_shortpixel_metadata($result, $old_filename, $new_filename, $attachment_id, $file_path){
 		if (phoenix_media_rename_plugins::is_plugin_active(constant("pluginShortpixelImageOptimiser"))) {
@@ -320,8 +330,7 @@ class phoenix_media_rename_plugins{
 	 * @param string $path
 	 * @param string $old_filename
 	 * @param string $new_filename
-	 * 
-	 * @return void
+	 * * @return void
 	 */
 	private static function rename($path, $old_filename, $new_filename){
 		//get filename
@@ -385,8 +394,7 @@ class phoenix_media_rename_plugins{
 	 * @param string $key: metadata to update
 	 * @param string $old_filename
 	 * @param string $new_filename
-	 * 
-	 * @return array
+	 * * @return array
 	 */
 	static function update_single_shortpixel_metadata($result, $key, $old_filename, $new_filename){
 		//check if Shortpixel data contains thumbs data
@@ -565,4 +573,3 @@ class phoenix_media_rename_plugins{
 #endregion
 
 }
-
