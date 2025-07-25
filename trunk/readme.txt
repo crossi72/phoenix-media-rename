@@ -3,8 +3,8 @@ Contributors: crossi72, ShadowsDweller
 Tags: media, file, image, rename, retitle
 Requires at least: 5.0
 Tested up to: 6.8
-Stable tag: 3.12.10
-Requires PHP: 7.4
+Stable tag: 3.12.11
+Requires PHP: 8.0
 License: GPL3
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
 Donate link: https://paypal.me/crossi72
@@ -115,6 +115,9 @@ If you would like more features, such as automatic renaming, or a dashboard for 
 6. screenshot-3.jpg
 
 == Changelog ==
+
+= 3.12.11 =
+* fixed issue with AltText.ai
 
 = 3.12.10 =
 * fixed issue with WPML (thanks to @austrohack for addressing the issue)

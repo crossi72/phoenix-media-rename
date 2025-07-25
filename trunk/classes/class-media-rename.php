@@ -916,10 +916,16 @@ Please select a bulk action before pressing the "Apply" button.', constant('PHOE
 		//update ShortPixel thumbnails data
 		$result = phoenix_media_rename_plugins::update_shortpixel_metadata($result, $file_info->file_old_filename, $file_info->new_filename, $attachment_id, $file_info->file_path);
 
-		//replace original filename (needed to ensure correct wp-cli management of thumbnails renegeration)
-		if (array_key_exists('original_image', $result)){
-			$result['original_image'] = $file_info->new_filename . '.' . $file_info->file_extension;
+		//check if $result is an array
+		if (!is_array($result)){
+			//if $result is not an array, convert it to an array
+			$result = array();
+		} else {
+			//if $result is an array,replace original filename (needed to ensure correct wp-cli management of thumbnails renegeration)
+			if (array_key_exists('original_image', $result)){
+				$result['original_image'] = $file_info->new_filename . '.' . $file_info->file_extension;
 			}
+		}
 
 		//add the code to rename original file (if exists)
 		foreach ($new_meta as $key => $value) {
