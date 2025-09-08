@@ -390,7 +390,7 @@ Please select a bulk action before pressing the "Apply" button.', constant('PHOE
 					}
 				}
 
-				echo $this->do_rename($attachment_id, $new_filename, $retitle, $title_from_post, $name_from_post, true, false, $force_serializiation, $rename);
+				echo $this->do_rename($attachment_id, $new_filename, $retitle, $title_from_post, $name_from_post, true, null, $force_serializiation, $rename);
 				}
 
 			wp_die();
@@ -578,9 +578,10 @@ Please select a bulk action before pressing the "Apply" button.', constant('PHOE
 	 * @param boolean $force_lowercase true: change the filename to lowercase
 	 * @param boolean $force_serializiation true: add a progressive number to the filename
 	 * @param boolean $rename true: rename the file
+	 * @param boolean $new_extension: if empty don't change the file extension, if contains a value change the file extension
 	 * @return string
 	 */
-	static function do_rename($attachment_id, $new_filename, $retitle = 0, $title_from_post = 0, $name_from_post = 0, $check_post_parent = true, $force_lowercase = false, $force_serializiation = false, $rename = true) {
+	static function do_rename($attachment_id, $new_filename, $retitle = 0, $title_from_post = 0, $name_from_post = 0, $check_post_parent = true, $force_lowercase = null, $force_serializiation = false, $rename = true, $new_extension = '') {
 		//Variables
 		$options = new phoenix_media_rename_options();
 		$post = get_post($attachment_id);
@@ -590,6 +591,17 @@ Please select a bulk action before pressing the "Apply" button.', constant('PHOE
 
 		if ($force_serializiation){
 			$options->option_serialize_if_filename_present = true;
+		}
+
+		//enforce lowercase if needed
+		//check if $force_lowercase is null (not set)
+		if ($force_lowercase === null){
+			//$force_lowercase is not set, read option from settings
+			$force_lowercase = $options->option_convert_to_lowercase;
+		}
+		else {
+			//$force_lowercase is set, use the value passed to the function
+			$options->option_convert_to_lowercase = $force_lowercase;
 		}
 
 		if (($title_from_post) || ($name_from_post)){
@@ -632,7 +644,7 @@ Please select a bulk action before pressing the "Apply" button.', constant('PHOE
 		else {
 			//renaming is enabled
 
-			$file_info = new phoenix_media_rename_file_info($attachment_id, $new_filename, $options, $post_parent_category);
+			$file_info = new phoenix_media_rename_file_info($attachment_id, $new_filename, $options, $post_parent_category, $new_extension);
 
 			if (phoenix_media_rename_plugins::is_plugin_active(constant("pluginAmazonS3AndCloudfront"))) {
 				//plugin is active
@@ -1119,6 +1131,7 @@ class phoenix_media_rename_file_info{
 	public $file_subfolder;
 	public $file_old_filename;
 	public $filename_ends_with;
+	public $file_old_extension;
 	public $file_extension;
 	public $file_edited;
 	public $filename;
@@ -1138,8 +1151,9 @@ class phoenix_media_rename_file_info{
 	 * @param string $new_filename new file name
 	 * @param phoenix_media_rename_options $options Phoenix Media Rename options
 	 * @param string $post_parent_category name of the main category of the post parent
+	 * @param string $new_extension: if empty don't change the file extension, if contains a value change the file extension
 	 */
-	public function __construct($attachment_id, $new_filename, $options, $post_parent_category){
+	public function __construct($attachment_id, $new_filename, $options, $post_parent_category, $new_extension){
 		$file_parts = phoenix_media_rename_lib::get_file_parts($attachment_id);
 		$this->new_filename_unsanitized = $new_filename;
 		$this->base_url = $file_parts['baseurl'];
@@ -1147,16 +1161,25 @@ class phoenix_media_rename_file_info{
 		$this->file_subfolder = $file_parts['subfolder'];
 		$this->file_old_filename = $file_parts['filename'];
 		$this->filename_ends_with = $file_parts['endswith'];
-		$this->file_extension = $file_parts['extension'];
+		if ($new_extension != ''){
+			//sanitize file extension
+			$new_extension = preg_replace('/[^a-z0-9]/i', '', $new_extension);
+			//set new file extension
+			$this->file_extension = $new_extension;
+		} else {
+			//don't change the file extension
+			$this->file_extension = $file_parts['extension'];
+		}
+		$this->file_old_extension = $file_parts['extension'];
 		$this->file_edited = $file_parts['edited'];
 		$this->filename = $file_parts['filename'];
 		$this->original_filename = $file_parts['originalfilename'];
 		$this->new_filename = $new_filename;
 		$this->new_filename = phoenix_media_rename_lib::clear_filename($options, $post_parent_category, $this);
 
-		$this->file_abs_path = $this->file_path . $this->file_old_filename . '.' .$this->file_extension;
+		$this->file_abs_path = $this->file_path . $this->file_old_filename . '.' .$this->file_old_extension;
 		$this->file_abs_dir = $this->file_path;
-		$this->file_rel_path = $this->file_subfolder . $this->file_old_filename . '.' .$this->file_extension;
+		$this->file_rel_path = $this->file_subfolder . $this->file_old_filename . '.' .$this->file_old_extension;
 
 		$this->new_file_rel_path = preg_replace('~[^/]+$~', $this->new_filename . '.' . $this->file_extension, $this->file_rel_path);
 		$this->new_file_abs_path = preg_replace('~[^/]+$~', $this->new_filename . '.' . $this->file_extension, $this->file_abs_path);

@@ -4,7 +4,7 @@
 *
 */
 
-class pmr_settings_page
+class phoenix_media_rename_settings_page
 {
 	/**
 	 * Holds the values to be used in the fields callbacks
@@ -29,7 +29,8 @@ class pmr_settings_page
 		add_option('pmr_options', array('pmr_filename_header'), '', 'yes');
 		add_option('pmr_options', array('pmr_category_filename_trailer' => false), '', 'yes');
 		add_option('pmr_options', array('pmr_filename_trailer'), '', 'yes');
-		add_filter('plugin_action_links_'. PMR_BASENAME, array($this, 'pmr_add_action_links'));
+		add_option('pmr_options', array('pmr_enable_alttext_integration'), '', 'yes');
+		add_filter('plugin_action_links_'. PHOENIX_MEDIA_RENAME_BASENAME, array($this, 'pmr_add_action_links'));
 	}
 
 	function pmr_add_action_links ($links) {
@@ -47,7 +48,7 @@ class pmr_settings_page
 	{
 		// This page will be under "Settings"
 		add_options_page(
-			'Settings Admin', 
+			__('Settings Admin', constant('PHOENIX_MEDIA_RENAME_TEXT_DOMAIN')),  
 			'Phoenix Media Rename', 
 			'manage_options', 
 			'pmr-setting-admin', 
@@ -64,7 +65,7 @@ class pmr_settings_page
 		$this->options = get_option('pmr_options');
 		?>
 		<div class="wrap">
-			<h1><?php echo __('Phoenix Media Rename Settings'); ?></h1>
+			<h1><?php esc_html_e('Phoenix Media Rename Settings', constant('PHOENIX_MEDIA_RENAME_TEXT_DOMAIN')); ?></h1>
 			<form method="post" action="options.php">
 			<?php
 				// This prints out all hidden setting fields
@@ -225,6 +226,21 @@ class pmr_settings_page
 			'setting_section_filename' // Section
 		);
 
+		add_settings_section(
+			'setting_section_integrations', // ID
+			__('Integrations', constant('PHOENIX_MEDIA_RENAME_TEXT_DOMAIN')), // Title
+			array($this, 'print_create_integrations_section_info'), // Callback
+			'pmr-setting-admin' // Page
+		);
+
+		add_settings_field(
+			'pmr_enable_alttext_integration', // pmr_enable_alttext_integration
+			__('AltText.ai', constant('PHOENIX_MEDIA_RENAME_TEXT_DOMAIN')), // Title 
+			array($this, 'pmr_enable_alttext_integration_callback'), // Callback
+			'pmr-setting-admin', // Page
+			'setting_section_integrations' // Section
+		);
+
 	}
 
 	/**
@@ -245,6 +261,7 @@ class pmr_settings_page
 			$new_input['pmr_filename_header'] = '';
 			$new_input['pmr_category_filename_trailer'] = false;
 			$new_input['pmr_filename_trailer'] = '';
+			$new_input['pmr_enable_alttext_integration'] = false;
 		}
 
 		$this->sanitize_boolean($input, 'pmr_update_revisions', $new_input);
@@ -258,6 +275,7 @@ class pmr_settings_page
 		$this->sanitize_text($input, 'pmr_filename_header', $new_input);
 		$this->sanitize_boolean($input, 'pmr_category_filename_trailer', $new_input);
 		$this->sanitize_text($input, 'pmr_filename_trailer', $new_input);
+		$this->sanitize_text($input, 'pmr_enable_alttext_integration', $new_input);
 
 		return $new_input;
 	}
@@ -323,9 +341,7 @@ class pmr_settings_page
 	 */
 	public function print_sanitize_filename_section_info()
 	{
-		print __('Check to sanitize file name, uncheck to leave filename as entered by user:<br>
-		<strong>Please Note</strong>: disabling this option can generate filenames that are incompatible with the server, disable at your own risk!<br>
-		<strong>Please Note</strong>: if "Sanitize filenames" is active, "Remove accents" cannot be disabled!', constant('PHOENIX_MEDIA_RENAME_TEXT_DOMAIN'));
+		print __('Check to sanitize file name, uncheck to leave filename as entered by user:<br><strong>Please Note</strong>: disabling this option can generate filenames that are incompatible with the server, disable at your own risk!<br><strong>Please Note</strong>: if "Sanitize filenames" is active, "Remove accents" cannot be disabled!', constant('PHOENIX_MEDIA_RENAME_TEXT_DOMAIN'));
 	}
 
 	/** 
@@ -358,6 +374,14 @@ class pmr_settings_page
 	public function print_create_filename_section_info()
 	{
 		print __('Add constant values to the beginning and end of the file name, these values will be added automatically to each renamed file.', constant('PHOENIX_MEDIA_RENAME_TEXT_DOMAIN'));
+	}
+
+	/** 
+	 * Print the Section text
+	 */
+	public function print_create_integrations_section_info()
+	{
+		print __('Enable integration with other plugins.', constant('PHOENIX_MEDIA_RENAME_TEXT_DOMAIN'));
 	}
 
 	/** 
@@ -459,6 +483,15 @@ class pmr_settings_page
 		echo '<input type="text" id="pmr_filename_trailer" name="pmr_options[pmr_filename_trailer]" value="'. $value . '"//>';
 	}
 
+	/** 
+	 * Get the settings option array and print one of its values
+	 */
+	public function pmr_enable_alttext_integration_callback()
+	{
+		$value = $this->get_value_checkbox('pmr_enable_alttext_integration', false);
+		echo '<input type="checkbox" id="pmr_enable_alttext_integration" name="pmr_options[pmr_enable_alttext_integration]" value="1" ' . $value . '//>';
+	}
+
 	/**
 	 * Get a checked status from the array containing the options
 	 *
@@ -492,4 +525,4 @@ class pmr_settings_page
 }
 
 if(is_admin())
-	$pmr_settings_page = new pmr_settings_page();
+	$pmr_settings_page = new phoenix_media_rename_settings_page();

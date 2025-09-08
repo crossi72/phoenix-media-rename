@@ -4,6 +4,8 @@
 *
 */
 
+require_once('class-pmr-options.php');
+
 #region constants
 
 define("pluginArchivarixExternalImagesImporter", "archivarix-external-images-importer/archivarix-external-images-importer.php");
@@ -14,16 +16,24 @@ define("pluginWPML", "sitepress-multilingual-cms/sitepress.php");
 define("pluginRedirection", "redirection/redirection.php");
 define("pluginRankMath", "seo-by-rank-math/rank-math.php");
 define("pluginElementor", "elementor/elementor.php");
-
-abstract class elementor_element
-{
-	const css = 0;
-	const data = 1;
-}
+define("pluginAltTextAI", "alttext-ai/atai.php");
+define("pluginBeaverBuilerLite", "beaver-builder-lite-version/fl-builder.php");
 
 #endregion
 
-class pmr_plugins{
+if (phoenix_media_rename_plugins::is_plugin_active(constant("pluginAltTextAI"))){
+	$options = new phoenix_media_rename_options();
+
+	if ($options->option_enable_alttext_integration){
+		add_action('atai_alttext_generated', 'phoenix_media_rename_on_alttext_generated', 10, 2);
+
+		function phoenix_media_rename_on_alttext_generated($attachment_id, $alt_text) {
+			Phoenix_Media_Rename::do_rename($attachment_id, $alt_text);
+		}
+	}
+}
+
+class phoenix_media_rename_plugins{
 
 	/**
 	 * check if plugin is active
@@ -72,7 +82,7 @@ class pmr_plugins{
 		//compose Smart Slider table name
 		$tablename = $wpdb->prefix . 'nextend2_smartslider3_slides';
 
-		if (! pmr_lib::table_exist($tablename)){
+		if (! phoenix_media_rename_lib::table_exist($tablename)){
 			//if table does not exist, exit and return false
 			return false;
 		}else{
@@ -87,7 +97,7 @@ class pmr_plugins{
 
 		$tablename = $wpdb->prefix . 'nextend2_image_storage';
 
-		if (pmr_lib::table_exist($tablename)){
+		if (phoenix_media_rename_lib::table_exist($tablename)){
 			//if table exist, change file name (unnecessary table, does not exit if table is missing)
 			$sqlQuery = "UPDATE ". $tablename ." SET image = REPLACE(image, %s, %s) WHERE image LIKE %s";
 
@@ -105,31 +115,42 @@ class pmr_plugins{
 #region WPML compatibility
 
 	/**
-	 * Update Smart WPML custom table
+	 * Update WPML custom table
 	 *
-	 * @param string $extension
+	 * @param int $post_id The ID of the original, renamed attachment.
 	 * @return void
 	 */
 	static function update_wpml($post_id){
 		// Get "trid" of the file
 		$trid = apply_filters('wpml_element_trid', NULL, $post_id, 'post_attachment');
-
+	
 		if (empty($trid)) {
-			//translation not found
-		} else {
-			//get all translations
-			$translations = apply_filters('wpml_get_element_translations', NULL, $trid);
-
-			//iterates through translations to update attachment metadata
-			foreach ($translations as $translation) {
-				if ($post_id == $translation->element_id) {
-					//update filename
-					update_post_meta($translation->element_id, '_wp_attached_file', get_post_meta($translation->element_id, '_wp_attached_file', true));
-
-					//update metadata
-					update_post_meta($translation->element_id, '_wp_attachment_metadata', get_post_meta($translation->element_id, '_wp_attachment_metadata', true));
-				}
+			// Translation group not found, nothing to do.
+			return;
+		}
+	
+		// Get the NEW, updated metadata from the original attachment that was just renamed.
+		$new_attached_file = get_post_meta($post_id, '_wp_attached_file', true);
+		$new_attachment_metadata = get_post_meta($post_id, '_wp_attachment_metadata', true);
+	
+		// If the new metadata is empty, abort to avoid issues.
+		if (empty($new_attached_file) || empty($new_attachment_metadata)) {
+			return;
+		}
+		
+		// Get all translations in the group.
+		$translations = apply_filters('wpml_get_element_translations', NULL, $trid, 'post_attachment');
+	
+		// Iterates through translations to update their attachment metadata.
+		foreach ($translations as $translation) {
+			// Skip the original attachment itself, as it is already updated.
+			if ($post_id == $translation->element_id) {
+				continue;
 			}
+	
+			// Apply the new file path and metadata to the translated attachment.
+			update_post_meta($translation->element_id, '_wp_attached_file', $new_attached_file);
+			update_post_meta($translation->element_id, '_wp_attachment_metadata', $new_attachment_metadata);
 		}
 	}
 
@@ -184,14 +205,14 @@ class pmr_plugins{
 							require_once WP_PLUGIN_DIR . '/redirection/models/group.php';
 
 							$details = [
-								'url'			=> $old_filename,
-								'action_data'	=> [ 'url' => $new_filename ],
-								'action_type'	=> 'url',
-								'title'			=> 'Phoenix Media Rename',
-								'status'		=> 'enabled',
-								'regex'			=> false,
-								'group_id'		=> 2, //set group to "updated posts"
-								'match_type'	=> 'url',
+								'url'            => $old_filename,
+								'action_data'    => [ 'url' => $new_filename ],
+								'action_type'    => 'url',
+								'title'          => 'Phoenix Media Rename',
+								'status'         => 'enabled',
+								'regex'          => false,
+								'group_id'       => 2, //set group to "updated posts"
+								'match_type'     => 'url',
 							];
 
 							//add redirection via Redirection's functions
@@ -234,11 +255,10 @@ class pmr_plugins{
 	 * @param string $new_filename
 	 * @param integer $attachment_id
 	 * @param string $file_path
-	 * 
-	 * @return array
+	 * * @return array
 	 */
 	static function update_shortpixel_metadata($result, $old_filename, $new_filename, $attachment_id, $file_path){
-		if (pmr_plugins::is_plugin_active(constant("pluginShortpixelImageOptimiser"))) {
+		if (phoenix_media_rename_plugins::is_plugin_active(constant("pluginShortpixelImageOptimiser"))) {
 			//change filename in thumnail list
 			$shortpixelKey = 'thumbsOptList';
 			$result = self::update_single_shortpixel_metadata($result, $shortpixelKey, $old_filename, $new_filename);
@@ -310,8 +330,7 @@ class pmr_plugins{
 	 * @param string $path
 	 * @param string $old_filename
 	 * @param string $new_filename
-	 * 
-	 * @return void
+	 * * @return void
 	 */
 	private static function rename($path, $old_filename, $new_filename){
 		//get filename
@@ -335,10 +354,10 @@ class pmr_plugins{
 		$full_new_filename = $path . str_replace($real_name, $new_filename, $old_filename);
 
 		//create the new file
-		if (!copy($full_old_filename, $full_new_filename)) return __('File renaming error! Tried to copy ' . $full_old_filename . ' to ' . $full_new_filename);
+		if (!copy($full_old_filename, $full_new_filename)) return printf(__('File renaming error! Tried to copy %1$s to %2$s.', constant('PHOENIX_MEDIA_RENAME_TEXT_DOMAIN')), $full_old_filename , $full_new_filename);
 
 		//delete old media file, thumbnails will be deleted later
-		if (!unlink($full_old_filename)) return __('File renaming error! Tried to delete ' . $full_old_filename);
+		if (!unlink($full_old_filename)) return printf(__('File renaming error! Tried to delete %s.', constant('PHOENIX_MEDIA_RENAME_TEXT_DOMAIN')), $full_old_filename);
 	}
 
 	/**
@@ -375,8 +394,7 @@ class pmr_plugins{
 	 * @param string $key: metadata to update
 	 * @param string $old_filename
 	 * @param string $new_filename
-	 * 
-	 * @return array
+	 * * @return array
 	 */
 	static function update_single_shortpixel_metadata($result, $key, $old_filename, $new_filename){
 		//check if Shortpixel data contains thumbs data
@@ -423,7 +441,7 @@ class pmr_plugins{
 	static function update_elementor_data($post_id, $key = '', $searches = '', $replaces = ''){
 		global $wpdb;
 
-		if (pmr_plugins::is_plugin_active(constant("pluginElementor"))) {
+		if (phoenix_media_rename_plugins::is_plugin_active(constant("pluginElementor"))) {
 			$table_name = $wpdb->prefix . 'postmeta';
 
 			switch ($key){
@@ -466,8 +484,8 @@ class pmr_plugins{
 				break;
 				default:
 					//update wp_postmeta
-					// $meta[0] = pmr_lib::unserialize_deep($meta[0]);
-					// $new_meta = pmr_lib::replace_media_urls($meta[0], $searches, $replaces);
+					// $meta[0] = phoenix_media_rename_lib::unserialize_deep($meta[0]);
+					// $new_meta = phoenix_media_rename_lib::replace_media_urls($meta[0], $searches, $replaces);
 					// //there is an issue with Elementor, check when _wp_page_template changes
 					// if ($new_meta != $meta[0]) update_post_meta($post_id, $key, $new_meta, $meta[0]);
 			}
@@ -476,5 +494,82 @@ class pmr_plugins{
 
 #endregion
 
-}
+#region BeaverBuilder compatibility
 
+	/**
+	 * Updates all Beaver Builder metadata
+	 *
+	 * @param int $post_id
+	 * @param array $searches
+	 * @param array $replaces
+	 * @return void
+	 */
+	static function update_beaver_builder_data($post_id, $searches, $replaces){
+		if (phoenix_media_rename_plugins::is_plugin_active(constant("pluginBeaverBuilerLite"))) {
+			//updates draft and published content
+			for ($i = 0; $i < sizeof($searches); $i++){
+				self::update_beaver_builder_meta($post_id, '_fl_builder_draft', $searches[$i], $replaces[$i]);
+				self::update_beaver_builder_meta($post_id, '_fl_builder_data', $searches[$i], $replaces[$i]);
+			}
+		}
+	}
+
+	/**
+	 * Updates single Beaver Builder metadata
+	 *
+	 * @param int $post_id the ID of the post to update
+	 * @param string $meta_key the key of the meta to update
+	 * @param string $search old filename
+	 * @param string $replace new filename
+	 * @return void
+	 */
+	static private function update_beaver_builder_meta($post_id, $meta_key, $search, $replace){
+		//get old meta value
+		$meta_value = get_post_meta($post_id, $meta_key, true);
+
+		//update meta value
+		if (self::update_picture_src($meta_value, $search, $replace)){
+			update_post_meta($post_id, $meta_key, $meta_value);
+		}
+	}
+
+	/**
+	 * Updates single Beaver Builder metadata
+	 *
+	 * @param array $meta_values meta values for the post
+	 * @param string $old_value old filename
+	 * @param string $new_value new filename
+	 * @return void
+	 */
+	static private function update_picture_src($meta_values, $old_value, $new_value) {
+		$result = false;
+
+		//iterates through meta values to update images
+		foreach ($meta_values as $key => &$value) {
+			if (is_array($value)) {
+				self::update_picture_src($value, $old_value, $new_value);
+			} else {
+				if (property_exists($value, "settings")){
+					if (property_exists($value->settings, "photo_src")){
+						$value->settings->photo_src = str_replace($old_value, $new_value, $value->settings->photo_src);
+						$result = true;
+					}
+					if (property_exists($value->settings, "filename")){
+						$value->settings->filename = str_replace($old_value, $new_value, $value->settings->filename);
+						$result = true;
+					}
+					if (property_exists($value->settings, "url")){
+						$value->settings->url = str_replace($old_value, $new_value, $value->settings->url);
+						$result = true;
+					}
+				}
+			}
+		}
+
+		return $result;
+	}
+	
+
+#endregion
+
+}

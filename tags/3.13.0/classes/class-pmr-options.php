@@ -4,7 +4,7 @@
 *
 */
 
-class pmr_options {
+class phoenix_media_rename_options {
 
 	private $options;
 	public $option_update_revisions;
@@ -18,6 +18,7 @@ class pmr_options {
 	public $option_category_filename_header;
 	public $option_category_filename_trailer;
 	public $option_convert_to_lowercase;
+	public $option_enable_alttext_integration;
 
 	/**
 	 * Constructor
@@ -38,6 +39,7 @@ class pmr_options {
 			$this->option_filename_trailer = $this->get_option_text($this->options, 'pmr_filename_trailer', '');
 			$this->option_category_filename_header = $this->get_option_boolean($this->options, 'pmr_category_filename_header', false);
 			$this->option_category_filename_trailer = $this->get_option_boolean($this->options, 'pmr_category_filename_trailer', false);
+			$this->option_enable_alttext_integration = $this->get_option_boolean($this->options, 'pmr_enable_alttext_integration', false);
 
 			$this->clear_options();
 		}
@@ -47,14 +49,17 @@ class pmr_options {
 	 * Updates options if necessary
 	 * Some option value could be changed during the rename process
 	 *
+	 * @param array $searches strings to search for
+	 * @param array $replaces values to replace
+	 *
 	 * @return void
 	 */
-	public function update_options(){
+	public function update_options($searches, $replaces){
 		$local_options = $this->get_all_options();
 
 		foreach ($local_options as $option) {
-			$option['value'] = pmr_lib::unserialize_deep($option['value']);
-			$new_option = pmr_lib::replace_media_urls($option['value'], $searches, $replaces);
+			$option['value'] = phoenix_media_rename_lib::unserialize_deep($option['value']);
+			$new_option = phoenix_media_rename_lib::replace_media_urls($option['value'], $searches, $replaces);
 			if ($new_option != $option['value']) update_option($option['name'], $new_option);
 		}
 	}
