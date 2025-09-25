@@ -18,18 +18,20 @@ class phoenix_media_rename_settings_page
 	{
 		add_action('admin_menu', array($this, 'add_pmr_settings_page'));
 		add_action('admin_init', array($this, 'page_init'));
-		add_option('pmr_options', array('pmr_update_revisions' => true), '', 'yes');
-		add_option('pmr_options', array('pmr_sanitize_filenames' => true), '', 'yes');
-		add_option('pmr_options', array('pmr_remove_accents' => true), '', 'yes');
-		add_option('pmr_options', array('pmr_filename_lowercase' => true), '', 'yes');
-		add_option('pmr_options', array('pmr_debug_mode' => false), '', 'yes');
-		add_option('pmr_options', array('pmr_create_redirection' => false), '', 'yes');
-		add_option('pmr_options', array('pmr_serialize_if_filename_present' => true), '', 'yes');
-		add_option('pmr_options', array('pmr_category_filename_header' => false), '', 'yes');
-		add_option('pmr_options', array('pmr_filename_header'), '', 'yes');
-		add_option('pmr_options', array('pmr_category_filename_trailer' => false), '', 'yes');
-		add_option('pmr_options', array('pmr_filename_trailer'), '', 'yes');
-		add_option('pmr_options', array('pmr_enable_alttext_integration'), '', 'yes');
+		add_option('pmr_options', array(
+			'pmr_update_revisions' => true,
+			'pmr_sanitize_filenames' => true,
+			'pmr_remove_accents' => true,
+			'pmr_filename_lowercase' => true,
+			'pmr_debug_mode' => false,
+			'pmr_create_redirection' => false,
+			'pmr_serialize_if_filename_present' => true,
+			'pmr_category_filename_header' => false,
+			'pmr_filename_header' => '',
+			'pmr_category_filename_trailer' => false,
+			'pmr_filename_trailer' => '',
+			'pmr_enable_alttext_integration' => false
+		), '', 'yes');
 		add_filter('plugin_action_links_'. PHOENIX_MEDIA_RENAME_BASENAME, array($this, 'pmr_add_action_links'));
 	}
 

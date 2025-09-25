@@ -3,7 +3,7 @@ Contributors: crossi72, ShadowsDweller
 Tags: media, file, image, rename, retitle
 Requires at least: 5.0
 Tested up to: 6.8
-Stable tag: 3.13.0
+Stable tag: 3.13.1
 Requires PHP: 8.0
 License: GPL3
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
@@ -115,6 +115,9 @@ If you would like more features, such as automatic renaming, or a dashboard for 
 6. screenshot-3.jpg
 
 == Changelog ==
+
+= 3.13.1 =
+* fixed warning in Elementor when do_rename is called from WebP Image Converter & Replacer plugin
 
 = 3.13.0 =
 * changed do_rename function prototype to ensure compatibility with WebP Image Converter & Replacer plugin API

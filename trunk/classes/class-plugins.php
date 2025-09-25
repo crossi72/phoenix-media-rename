@@ -469,14 +469,17 @@ class phoenix_media_rename_plugins{
 				case '_elementor_data':
 					try{
 						for ($i = 0; $i < sizeof($searches); $i++){
-							$wpdb->query(
-								$wpdb->prepare('UPDATE ' . $table_name . '
-									SET meta_value = REPLACE (meta_value, %s, %s)
-									WHERE post_id = %d
-									AND meta_key = %s',
-									array(str_replace('/', '\/', $searches[$i]) , str_replace('/', '\/', $replaces[$i]), $post_id, $key)
-								)
-							);
+							//check if $searches and $replaces are arrays
+							if (is_array($searches) && is_array($replaces)){
+								$wpdb->query(
+									$wpdb->prepare('UPDATE ' . $table_name . '
+										SET meta_value = REPLACE (meta_value, %s, %s)
+										WHERE post_id = %d
+										AND meta_key = %s',
+										array(str_replace('/', '\/', $searches[$i]) , str_replace('/', '\/', $replaces[$i]), $post_id, $key)
+									)
+								);
+							}
 						}
 					} catch(exception $e){
 

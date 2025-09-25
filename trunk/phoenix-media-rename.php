@@ -4,7 +4,7 @@
 Plugin Name: Phoenix Media Rename
 Plugin URI: https://www.eurosoftlab.com/en/phoenix-media-rename/
 Description: The Phoenix Media Rename plugin allows you to simply rename your media files, once uploaded.
-Version: 3.13.0
+Version: 3.13.1
 Author: crossi72
 Author URI: https://eurosoftlab.com
 Text Domain: phoenix-media-rename
