@@ -2,7 +2,7 @@
 Contributors: crossi72, ShadowsDweller
 Tags: media, file, image, rename, retitle
 Requires at least: 5.0
-Tested up to: 6.8
+Tested up to: 7.0
 Stable tag: 3.13.1
 Requires PHP: 8.0
 License: GPL3

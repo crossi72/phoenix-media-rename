@@ -214,7 +214,7 @@ Please select a bulk action before pressing the "Apply" button.', constant('PHOE
 	 * @param integer $post_id
 	 * @param string $filename
 	 * @param string $extension
-	 * @return void
+	 * @return string HTML code of the "Filename" textfield
 	 */
 	function get_filename_field($post_id, $filename, $extension) {
 		if (!isset($this->nonce_printed)) $this->nonce_printed=0;
