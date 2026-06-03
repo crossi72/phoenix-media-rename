@@ -359,7 +359,7 @@ class phoenix_media_rename_settings_page
 	 */
 	public function print_create_redirection_section_info()
 	{
-		print __('Check to enable 301 redirection, this will create a 301 redirection after file renaming:<br><strong>Please Note</strong>: the free plugin <a href="https://wordpress.org/plugins/redirection/" target="_blank"> Redirection</a> is required to manage the 301 redirection.', constant('PHOENIX_MEDIA_RENAME_TEXT_DOMAIN'));
+		print __('Check to enable 301 redirection, this will create a 301 redirection after file renaming:<br><strong>Please Note</strong>: the free plugin <a href="https://wordpress.org/plugins/redirection/" target="_blank"> Redirection</a> or <a href="https://wordpress.org/plugins/seo-by-rank-math/" target="_blank"> Rank Math SEO</a> is required to manage the 301 redirection.', constant('PHOENIX_MEDIA_RENAME_TEXT_DOMAIN'));
 	}
 
 	/** 
