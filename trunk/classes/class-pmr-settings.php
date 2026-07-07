@@ -30,7 +30,8 @@ class phoenix_media_rename_settings_page
 			'pmr_filename_header' => '',
 			'pmr_category_filename_trailer' => false,
 			'pmr_filename_trailer' => '',
-			'pmr_enable_alttext_integration' => false
+			'pmr_enable_alttext_integration' => false,
+			'pmr_filename_textbox_width' => 0
 		), '', 'yes');
 		add_filter('plugin_action_links_'. PHOENIX_MEDIA_RENAME_BASENAME, array($this, 'pmr_add_action_links'));
 	}
@@ -243,6 +244,21 @@ class phoenix_media_rename_settings_page
 			'setting_section_integrations' // Section
 		);
 
+		add_settings_section(
+			'setting_section_interface', // ID
+			__('Interface', constant('PHOENIX_MEDIA_RENAME_TEXT_DOMAIN')), // Title
+			array($this, 'print_create_interface_section_info'), // Callback
+			'pmr-setting-admin' // Page
+		);
+
+		add_settings_field(
+			'pmr_filename_textbox_width', // pmr_filename_textbox_width
+			__('Filename textbox width', constant('PHOENIX_MEDIA_RENAME_TEXT_DOMAIN')), // Title 
+			array($this, 'pmr_filename_textbox_width_callback'), // Callback
+			'pmr-setting-admin', // Page
+			'setting_section_interface' // Section
+		);
+
 	}
 
 	/**
@@ -264,6 +280,7 @@ class phoenix_media_rename_settings_page
 			$new_input['pmr_category_filename_trailer'] = false;
 			$new_input['pmr_filename_trailer'] = '';
 			$new_input['pmr_enable_alttext_integration'] = false;
+			$new_input['pmr_filename_textbox_width'] = 0;
 		}
 
 		$this->sanitize_boolean($input, 'pmr_update_revisions', $new_input);
@@ -278,6 +295,7 @@ class phoenix_media_rename_settings_page
 		$this->sanitize_boolean($input, 'pmr_category_filename_trailer', $new_input);
 		$this->sanitize_text($input, 'pmr_filename_trailer', $new_input);
 		$this->sanitize_text($input, 'pmr_enable_alttext_integration', $new_input);
+		$this->sanitize_integer($input, 'pmr_filename_textbox_width', $new_input);
 
 		return $new_input;
 	}
@@ -311,6 +329,22 @@ class phoenix_media_rename_settings_page
 			$result[$variable] = $array[$variable];
 		} else {
 			$result[$variable] = '';
+		}
+	}
+
+	/**
+	 * Sanitize a text field
+	 *
+	 * @param array $array associative array containing the variable
+	 * @param string $variable array key corresponding to variable
+	 * @param array $result variable to set with che variable value
+	 * @return void
+	 */
+	public function sanitize_integer($array, $variable, &$result){
+		if(isset($array[$variable])){
+			$result[$variable] = (int)$array[$variable];
+		} else {
+			$result[$variable] = 0;
 		}
 	}
 
@@ -376,6 +410,14 @@ class phoenix_media_rename_settings_page
 	public function print_create_filename_section_info()
 	{
 		print __('Add constant values to the beginning and end of the file name, these values will be added automatically to each renamed file.', constant('PHOENIX_MEDIA_RENAME_TEXT_DOMAIN'));
+	}
+
+	/** 
+	 * Print the Section text
+	 */
+	public function print_create_interface_section_info()
+	{
+		print __('Interface settings.', constant('PHOENIX_MEDIA_RENAME_TEXT_DOMAIN'));
 	}
 
 	/** 
@@ -492,6 +534,15 @@ class phoenix_media_rename_settings_page
 	{
 		$value = $this->get_value_checkbox('pmr_enable_alttext_integration', false);
 		echo '<input type="checkbox" id="pmr_enable_alttext_integration" name="pmr_options[pmr_enable_alttext_integration]" value="1" ' . $value . '//>';
+	}
+
+	/** 
+	 * Get the settings option array and print one of its values
+	 */
+	public function pmr_filename_textbox_width_callback()
+	{
+		$value = $this->get_value_textbox('pmr_filename_textbox_width');
+		echo '<input type="number" step="1" min="0" id="pmr_filename_textbox_width" name="pmr_options[pmr_filename_textbox_width]" value="'. $value . '"//>';
 	}
 
 	/**

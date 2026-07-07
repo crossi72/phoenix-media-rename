@@ -6,19 +6,90 @@
 
 class phoenix_media_rename_options {
 
+	/**
+	 * Array of Phoenix Media Rename options
+	 *
+	 * @var mixed
+	 */
 	private $options;
+	/**
+	 * Update revisions option
+	 *
+	 * @var boolean
+	 */
 	public $option_update_revisions;
+	/**
+	 * Sanitize filename option
+	 *
+	 * @var boolean
+	 */
 	public $option_sanitize_filename;
+	/**
+	 * Remove accents option
+	 *
+	 * @var boolean
+	 */
 	public $option_remove_accents;
+	/**
+	 * Debug mode option
+	 *
+	 * @var boolean
+	 */
 	public $option_debug_mode;
+	/**
+	 * Create redirection option
+	 *
+	 * @var boolean
+	 */
 	public $option_create_redirection;
+	/**
+	 * Serialize if filename present option
+	 *
+	 * @var boolean
+	 */
 	public $option_serialize_if_filename_present;
+	/**
+	 * Filename header option
+	 *
+	 * @var string
+	 */	
 	public $option_filename_header;
+	/**
+	 * Filename trailer option
+	 *
+	 * @var string
+	 */
 	public $option_filename_trailer;
+	/**
+	 * Category filename header option
+	 *
+	 * @var boolean
+	 */
 	public $option_category_filename_header;
+	/**
+	 * Category filename trailer option
+	 *
+	 * @var boolean
+	 */
 	public $option_category_filename_trailer;
+	/**
+	 * Convert to lowercase option
+	 *
+	 * @var boolean
+	 */
 	public $option_convert_to_lowercase;
+	/**
+	 * Enable alt text integration option
+	 *
+	 * @var boolean
+	 */
 	public $option_enable_alttext_integration;
+	/**
+	 * Filename textbox width option
+	 *
+	 * @var integer
+	 */
+	public $option_filename_textbox_width;
 
 	/**
 	 * Constructor
@@ -40,6 +111,7 @@ class phoenix_media_rename_options {
 			$this->option_category_filename_header = $this->get_option_boolean($this->options, 'pmr_category_filename_header', false);
 			$this->option_category_filename_trailer = $this->get_option_boolean($this->options, 'pmr_category_filename_trailer', false);
 			$this->option_enable_alttext_integration = $this->get_option_boolean($this->options, 'pmr_enable_alttext_integration', false);
+			$this->option_filename_textbox_width = $this->get_option_integer($this->options, 'pmr_filename_textbox_width', 0);
 
 			$this->clear_options();
 		}
@@ -84,6 +156,31 @@ class phoenix_media_rename_options {
 		} else {
 			$this->option_filename_trailer = '';
 		}
+	}
+
+	/**
+	 * Retrieve integer option value
+	 *
+	 * @param array $options associative array containing the options
+	 * @param string $name name of the variable to get
+	 * @param int $default default value for variable to get
+	 * @return int option value
+	 */
+	private function get_option_integer($options, $name, $default){
+		$result = $default;
+
+		if (isset($options[$name])){
+			if ($options[$name]) {
+				$result = (int)$options[$name];
+			}else{
+				$result = $default;
+			}
+		} else {
+			// default
+			$result = $default;
+		}
+
+		return $result;
 	}
 
 	/**

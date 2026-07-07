@@ -33,13 +33,32 @@ class Phoenix_Media_Rename {
 
 	#endregion
 
+	/**
+	 * Plugin options
+	 *
+	 * @var phoenix_media_rename_options
+	 */
+	private $options;
+
+	/**
+	 * Current page is media.php or media-upload.php
+	 * 
+	 * @var boolean
+	 */
 	private $is_media_rename_page;
+	/**
+	 * Security nonce is present
+	 *
+	 * @var boolean
+	 */
 	private $nonce_printed;
 
 	/**
 	 * Initializes the plugin
 	 */
 	function __construct() {
+		//initialize options
+		$this->options = new phoenix_media_rename_options();
 		$post = isset($_REQUEST['post']) ? get_post($_REQUEST['post']) : NULL;
 		$is_media_edit_page = $post && $post->post_type == 'attachment' && $GLOBALS['pagenow'] == 'post.php';
 		$is_media_listing_page = $GLOBALS['pagenow'] == 'upload.php';
@@ -55,7 +74,23 @@ class Phoenix_Media_Rename {
 	 */
 	function add_filename_column($columns) {
 		$columns['filename'] = __('Filename', constant('PHOENIX_MEDIA_RENAME_TEXT_DOMAIN'));
+
 		return $columns;
+	}
+
+	/**
+	 * Adds custom CSS inline to set the width of the "Filename" column
+	 *
+	 * @return void
+	 */
+	function add_style_filename_column() {
+		//add 60px to column width to account for the extension and the loader, success and error icons
+		if ($this->options->option_filename_textbox_width > 0) {
+			echo '<style>
+				.table-view-list.media .phoenix-media-rename-filename {
+					width: ' . esc_attr($this->options->option_filename_textbox_width) . 'px; 
+				}</style>';
+		}
 	}
 
 	/**
@@ -496,7 +531,7 @@ Please select a bulk action before pressing the "Apply" button.', constant('PHOE
 	 * @param object $post post of the media file to rename
 	 * @param bool $name_from_post true: generate filename from post title; false: don't generate filename from post title
 	 * @param object $post_parent parent of the media post
-	 * @return void
+	 * @return string filename
 	 */
 	static function get_filename_from_post_parent($post, $name_from_post, &$post_parent){
 		//retrive post_parent
