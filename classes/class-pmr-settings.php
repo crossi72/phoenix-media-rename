@@ -8,11 +8,13 @@ class phoenix_media_rename_settings_page
 {
 	/**
 	 * Holds the values to be used in the fields callbacks
+	 * 
+	 * @var array
 	 */
 	private $options;
 
 	/**
-	 * Start up
+	 * Class constructor
 	 */
 	public function __construct()
 	{
@@ -36,6 +38,12 @@ class phoenix_media_rename_settings_page
 		add_filter('plugin_action_links_'. PHOENIX_MEDIA_RENAME_BASENAME, array($this, 'pmr_add_action_links'));
 	}
 
+	/**
+	 * Add action links to the plugin's entry in the plugins list
+	 *
+	 * @param array $links Existing action links
+	 * @return array Modified action links
+	 */
 	function pmr_add_action_links ($links) {
 		$mylinks = array(
 			'<a href="' . admin_url('options-general.php?page=pmr-setting-admin') . '">'. __('Settings', constant('PHOENIX_MEDIA_RENAME_TEXT_DOMAIN')) .'</a>',
