@@ -253,7 +253,7 @@ class phoenix_media_rename_settings_page
 
 		add_settings_field(
 			'pmr_filename_textbox_width', // pmr_filename_textbox_width
-			__('Filename textbox width', constant('PHOENIX_MEDIA_RENAME_TEXT_DOMAIN')), // Title 
+			__('Filename textbox width (0 or empty for default)', constant('PHOENIX_MEDIA_RENAME_TEXT_DOMAIN')), // Title 
 			array($this, 'pmr_filename_textbox_width_callback'), // Callback
 			'pmr-setting-admin', // Page
 			'setting_section_interface' // Section
@@ -549,8 +549,8 @@ class phoenix_media_rename_settings_page
 	 * Get a checked status from the array containing the options
 	 *
 	 * @param string $variable name of the variable to get
-	 * @param bool $default default value for variable to get\
-	 * @return checked
+	 * @param bool $default default value for variable to get
+	 * @return mixed
 	 */
 	private function get_value_checkbox($variable, $default){
 		if (isset($this->options[$variable])){
@@ -568,7 +568,7 @@ class phoenix_media_rename_settings_page
 	 * Get a text from the array containing the options
 	 *
 	 * @param string $variable name of the variable to get
-	 * @return checked
+	 * @return mixed
 	 */	private function get_value_textbox($variable){
 		$value = isset($this->options[$variable]) ? esc_attr($this->options[$variable]) : '';
 
