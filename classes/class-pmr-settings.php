@@ -289,6 +289,8 @@ class phoenix_media_rename_settings_page
 			$new_input['pmr_filename_trailer'] = '';
 			$new_input['pmr_enable_alttext_integration'] = false;
 			$new_input['pmr_filename_textbox_width'] = 0;
+		} else {
+			$new_input = array();
 		}
 
 		$this->sanitize_boolean($input, 'pmr_update_revisions', $new_input);

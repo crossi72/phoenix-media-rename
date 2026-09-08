@@ -10,12 +10,8 @@ class phoenix_media_rename_lib{
 	 * Generate the complete filename and sanitize it (if required)
 	 *
 	 * @param phoenix_media_rename_options $options Phoenix Media Rename options
-	 * @param string $new_filename new name for the media file
-	 * @param bool $file_edited true: file has been edited
-	 * @param string $file_filename_ends_with file suffix added by WordPress (-scaled)
-	 * @param string $file_extension file extension (file type)
-	 * @param string $file_subfolder name of the subfolder containing the file
 	 * @param string $post_parent_category name of the main category of the post parent
+	 * @param phoenix_media_rename_file_info $file_info filename elements
 	 * @return string
 	 */
 	public static function clear_filename($options, $post_parent_category, $file_info){// $file_edited, $file_filename_ends_with, $file_extension, $file_subfolder){
@@ -33,6 +29,7 @@ class phoenix_media_rename_lib{
 			$filename_header = $post_parent_category;
 		} else{
 			//no post parent's category name
+			$filename_header = '';
 		}
 
 		//add user selected header to filename
@@ -56,6 +53,7 @@ class phoenix_media_rename_lib{
 			$filename_trailer = $options->option_filename_trailer;
 		} else{
 			//no trailer entered by user
+			$filename_trailer = '';
 		}
 
 		//add post parent's category name to trailer
@@ -245,7 +243,7 @@ class phoenix_media_rename_lib{
 	 * Get attachment filename
 	 *
 	 * @param integer $post_id
-	 * @return void
+	 * @return string the filename of the attachment
 	 */
 	public static function get_filename($post_id) {
 		$filename = get_attached_file($post_id);
@@ -368,7 +366,7 @@ class phoenix_media_rename_lib{
 	 * @param string $filename: filename
 	 * @param string $extension: filename extension
 	 * @param string $file_subfolder: folder containing the file
-	 * @return void
+	 * @return string unique filename
 	 */
 	private static function serialize_if_file_exists($filename, $extension, $file_subfolder){
 		clearstatcache();
@@ -400,7 +398,7 @@ class phoenix_media_rename_lib{
 	 * Add a progessive number to the filename
 	 *
 	 * @param string $filename
-	 * @return void
+	 * @return string incremented filename
 	 */
 	private static function increment_filename($filename){
 		//if filename ends with '-scaled', remove the string
