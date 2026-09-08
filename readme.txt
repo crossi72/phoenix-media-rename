@@ -117,8 +117,7 @@ If you would like more features, such as automatic renaming, or a dashboard for 
 == Changelog ==
 
 = 3.13.4 =
-* fixed security issue
-
+* fixed security issue (thanks to @mahendraa5157 for addressing the issue)
 
 = 3.13.3 =
 * added option to set the width of the "Filename" column in the Media Library list view

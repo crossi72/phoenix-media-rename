@@ -253,7 +253,11 @@ Please select a bulk action before pressing the "Apply" button.', constant('PHOE
 	 */
 	function get_filename_field($post_id, $filename, $extension) {
 		if (!isset($this->nonce_printed)) $this->nonce_printed=0;
-		ob_start(); ?>
+		ob_start();
+		//sanitize the filename to prevent XSS attacks
+		$filename = esc_attr($filename);
+		$extension = esc_attr($extension);
+		?>
 
 			<div class="phoenix-media-rename">
 				<input type="text" class="text phoenix-media-rename-filename" autocomplete="post_title" value="<?php echo $filename ?>" title="<?php echo $filename ?>" data-post-id="<?php echo $post_id ?>" />
@@ -289,7 +293,7 @@ Please select a bulk action before pressing the "Apply" button.', constant('PHOE
 	 * Insert a value in Phoenix Media Rename table
 	 *
 	 * @param string $field
-	 * @param any $value
+	 * @param mixed $value
 	 * @return void
 	 */
 	function write_db_value($field, $value){
@@ -519,7 +523,7 @@ Please select a bulk action before pressing the "Apply" button.', constant('PHOE
 	 *
 	 * @param string $header
 	 * @param string $trailer
-	 * @return void
+	 * @return string
 	 */
 	function build_filename($header, $trailer){
 		return $header . $trailer;
@@ -547,6 +551,12 @@ Please select a bulk action before pressing the "Apply" button.', constant('PHOE
 		return $new_filename;
 	}
 
+	/**
+	 * Gets the category name of parent post
+	 *
+	 * @param WP_Post $post
+	 * @return string category name of the parent post
+	 */
 	static function get_category_from_post_parent($post){
 		//retrive post_parent
 		$post_parent = get_post($post->post_parent);
@@ -793,7 +803,7 @@ Please select a bulk action before pressing the "Apply" button.', constant('PHOE
 	 *
 	 * @param object $options Phoenix Media Rename options
 	 * @param integer $post_id id of the post to update (post_type attachment)
-	 * @param phoenix_media_rename_file_info $file_parts filename elements
+	 * @param phoenix_media_rename_file_info $file_info filename elements
 	 * @return string error message
 	 */
 	private static function rename_files($options, $post_id, $file_info){
@@ -949,11 +959,8 @@ Please select a bulk action before pressing the "Apply" button.', constant('PHOE
 	 *
 	 * @param array $old_meta old metadata values
 	 * @param array $new_meta new metadata values
-	 * @param string $new_filename new name
-	 * @param string $old_filename old name
 	 * @param integer $attachment_id id of the post to update
-	 * @param string $file_path path of the file
-	 * @param array $file_parts filename elements
+	 * @param phoenix_media_rename_file_info $file_info file information object
 	 * 
 	 * @return array
 	 */
@@ -1072,8 +1079,8 @@ Please select a bulk action before pressing the "Apply" button.', constant('PHOE
 	/**
 	 * Adds more problematic characters to the "sanitize_file_name_chars" filter
 	 *
-	 * @param string $special_chars
-	 * @return void
+	 * @param array $special_chars
+	 * @return array the modified array of special characters
 	 */
 	static function add_special_chars($special_chars) {
 		//can't add . to character list: due to bad implementation in WordPress core this would cause images to lose file extension
@@ -1084,8 +1091,7 @@ Please select a bulk action before pressing the "Apply" button.', constant('PHOE
 	 * Returns the attachment URL and sizes URLs, in case of an image
 	 *
 	 * @param integer $attachment_id id of the attachement to change
-	 * @param boolean $remove_suffix true: remove the -scaled suffix
-	 * @param phoenix_media_rename_operation $operation kind of operation (Search/Replace)
+	 * @param phoenix_media_rename_operation $operation whether the operation is search or replace
 	 * @param phoenix_media_rename_file_info $file_parts filename elements
 	 * @param string $new_filename the new filename
 	 * @return array
@@ -1161,22 +1167,107 @@ if (!function_exists('str_contains')) {
 #region class phoenix_media_rename_file_info
 
 class phoenix_media_rename_file_info{
+	/**
+	 * Base URL of the file
+	 *
+	 * @var string
+	 */
 	public $base_url;
+	/**
+	 * Path of the file
+	 *
+	 * @var string
+	 */
 	public $file_path;
+	/**
+	 * Subfolder of the file
+	 *
+	 * @var string
+	 */
 	public $file_subfolder;
+	/**
+	 * Old filename of the file (without extension)
+	 *
+	 * @var string
+	 */
 	public $file_old_filename;
+	/**
+	 * Suffix of the filename
+	 *
+	 * @var string
+	 */
 	public $filename_ends_with;
+	/**
+	 * Old file extension of the file
+	 *
+	 * @var string
+	 */
 	public $file_old_extension;
+	/**
+	 * Current file extension of the file
+	 *
+	 * @var string
+	 */
 	public $file_extension;
+	/**
+	 * Indicates if the file has been edited
+	 *
+	 * @var bool
+	 */
 	public $file_edited;
+	/**
+	 * Current filename of the file (without extension)
+	 *
+	 * @var string
+	 */
 	public $filename;
+	/**
+	 * Original filename of the file (without extension)
+	 *
+	 * @var string
+	 */
 	public $original_filename;
+	/**
+	 * New filename of the file (without extension)
+	 *
+	 * @var string
+	 */
 	public $new_filename;
+	/**
+	 * New unsanitized filename of the file (without extension)
+	 *
+	 * @var string
+	 */
 	public $new_filename_unsanitized;
+	/**
+	 * Absolute path of the file
+	 *
+	 * @var string
+	 */
 	public $file_abs_path;
+	/**
+	 * Absolute path of the file
+	 *
+	 * @var string
+	 */
 	public $file_abs_dir;
+	/**
+	 * Relative path of the file
+	 *
+	 * @var string
+	 */
 	public $file_rel_path;
+	/**
+	 * New relative path of the file
+	 *
+	 * @var string
+	 */
 	public $new_file_rel_path;
+	/**
+	 * New absolute path of the file
+	 *
+	 * @var string
+	 */
 	public $new_file_abs_path;
 
 	/**

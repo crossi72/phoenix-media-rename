@@ -8,11 +8,13 @@ class phoenix_media_rename_settings_page
 {
 	/**
 	 * Holds the values to be used in the fields callbacks
+	 * 
+	 * @var array
 	 */
 	private $options;
 
 	/**
-	 * Start up
+	 * Class constructor
 	 */
 	public function __construct()
 	{
@@ -36,6 +38,12 @@ class phoenix_media_rename_settings_page
 		add_filter('plugin_action_links_'. PHOENIX_MEDIA_RENAME_BASENAME, array($this, 'pmr_add_action_links'));
 	}
 
+	/**
+	 * Add action links to the plugin's entry in the plugins list
+	 *
+	 * @param array $links Existing action links
+	 * @return array Modified action links
+	 */
 	function pmr_add_action_links ($links) {
 		$mylinks = array(
 			'<a href="' . admin_url('options-general.php?page=pmr-setting-admin') . '">'. __('Settings', constant('PHOENIX_MEDIA_RENAME_TEXT_DOMAIN')) .'</a>',
@@ -253,7 +261,7 @@ class phoenix_media_rename_settings_page
 
 		add_settings_field(
 			'pmr_filename_textbox_width', // pmr_filename_textbox_width
-			__('Filename textbox width', constant('PHOENIX_MEDIA_RENAME_TEXT_DOMAIN')), // Title 
+			__('Filename textbox width (0 or empty for default)', constant('PHOENIX_MEDIA_RENAME_TEXT_DOMAIN')), // Title 
 			array($this, 'pmr_filename_textbox_width_callback'), // Callback
 			'pmr-setting-admin', // Page
 			'setting_section_interface' // Section
@@ -281,6 +289,8 @@ class phoenix_media_rename_settings_page
 			$new_input['pmr_filename_trailer'] = '';
 			$new_input['pmr_enable_alttext_integration'] = false;
 			$new_input['pmr_filename_textbox_width'] = 0;
+		} else {
+			$new_input = array();
 		}
 
 		$this->sanitize_boolean($input, 'pmr_update_revisions', $new_input);
@@ -549,8 +559,8 @@ class phoenix_media_rename_settings_page
 	 * Get a checked status from the array containing the options
 	 *
 	 * @param string $variable name of the variable to get
-	 * @param bool $default default value for variable to get\
-	 * @return checked
+	 * @param bool $default default value for variable to get
+	 * @return mixed
 	 */
 	private function get_value_checkbox($variable, $default){
 		if (isset($this->options[$variable])){
@@ -568,7 +578,7 @@ class phoenix_media_rename_settings_page
 	 * Get a text from the array containing the options
 	 *
 	 * @param string $variable name of the variable to get
-	 * @return checked
+	 * @return mixed
 	 */	private function get_value_textbox($variable){
 		$value = isset($this->options[$variable]) ? esc_attr($this->options[$variable]) : '';
 
