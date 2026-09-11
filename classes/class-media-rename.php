@@ -106,6 +106,9 @@ class Phoenix_Media_Rename {
 			// //set bulk rename process as stopped
 			// $this->reset_bulk_rename();
 
+			//convert $post_id to integer
+			$post_id = intval($post_id);
+
 			$file_parts = phoenix_media_rename_lib::get_file_parts($post_id);
 			echo $this->get_filename_field($post_id, $file_parts['filename'], $file_parts['extension']);
 		}
@@ -257,6 +260,8 @@ Please select a bulk action before pressing the "Apply" button.', constant('PHOE
 		//sanitize the filename to prevent XSS attacks
 		$filename = esc_attr($filename);
 		$extension = esc_attr($extension);
+		//convert $post_id to integer
+		$post_id = intval($post_id);
 		?>
 
 			<div class="phoenix-media-rename">
@@ -350,6 +355,8 @@ Please select a bulk action before pressing the "Apply" button.', constant('PHOE
 			$bulk_rename_in_progress = $_COOKIE['phoenix_media_rename_bulk_rename_in_progress'];
 
 			$attachment_id = $_REQUEST['post_id'];
+			//convert $attachment_id to integer
+			$attachment_id = intval($attachment_id);
 			$force_serializiation = false;
 
 			if (! current_user_can('edit_post', $attachment_id)){
