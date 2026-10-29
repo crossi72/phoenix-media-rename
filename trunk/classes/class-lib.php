@@ -326,8 +326,14 @@ class phoenix_media_rename_lib{
 	 * @return string unserialized variable
 	 */
 	public static function unserialize_deep($var) {
-		while (is_serialized($var)) {
-			$var = @unserialize($var);
+		while (is_string($var) && is_serialized($var)) {
+			$unserialized = @unserialize($var, array('allowed_classes' => false));
+
+			if (($unserialized === false) && ($var !== 'b:0;')) {
+				break;
+			}
+
+			$var = $unserialized;
 		}
 
 		return $var;
